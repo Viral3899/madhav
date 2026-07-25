@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Madhav Fashion Studio — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0f1117;
+      --bg2:       #1a1d27;
+      --bg3:       #22263a;
+      --surface:   #1e2130;
+      --border:    #2e3347;
+      --text:      #e8eaf0;
+      --text2:     #9aa0b8;
+      --text3:     #5c6380;
+      --accent:    #4f7ef8;
+      --accent2:   #3a68e0;
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --orange:    #f97316;
+      --radius:    12px;
+      --font:      'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Card ── */
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+    }
+
+    /* ── Logo header ── */
+    .card-header {
+      padding: 32px 32px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo span { color: var(--orange); }
+    .tagline { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      padding: 14px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text3);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    .tab-btn:hover  { color: var(--text2); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Tab panels ── */
+    .tab-panel { display: none; padding: 28px 32px 32px; }
+    .tab-panel.active { display: block; }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .panel-sub {
+      font-size: 13px;
+      color: var(--text3);
+      margin-bottom: 24px;
+    }
+
+    /* ── Form fields ── */
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: .04em; text-transform: uppercase; }
+    .field input {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      font-family: var(--font);
+    }
+    .field input:focus { border-color: var(--accent); }
+    .field input::placeholder { color: var(--text3); }
+
+    /* ── Error message ── */
+    .error-msg {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.3);
+      color: var(--red);
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .success-msg {
+      background: rgba(34,197,94,.1);
+      border: 1px solid rgba(34,197,94,.3);
+      color: var(--green);
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .success-msg.show { display: block; }
+
+    /* ── Submit button ── */
+    .btn-submit {
+      width: 100%;
+      padding: 13px 0;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-family: var(--font);
+    }
+    .btn-submit:hover   { background: var(--accent2); }
+    .btn-submit:active  { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* ── Admin badge ── */
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(249,115,22,.12);
+      border: 1px solid rgba(249,115,22,.3);
+      color: var(--orange);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: var(--text3);
+      font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Back link ── */
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text3);
+    }
+    .back-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .back-link a:hover { text-decoration: underline; }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Credentials hint ── */
+    .creds-hint {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .creds-hint strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="logo">Madhav <span>Fashion Studio</span></div>
+    <div class="tagline">Sign in to your account</div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('user-login')">Sign In</button>
+    <button class="tab-btn" onclick="switchTab('user-register')">Register</button>
+    <button class="tab-btn" onclick="switchTab('admin-login')">🔐 Admin</button>
+  </div>
+
+  <!-- ══ USER LOGIN ══════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-user-login">
+    <p class="panel-title">Welcome back</p>
+    <p class="panel-sub">Sign in to track your orders</p>
+    <div class="error-msg"   id="ul-error"></div>
+    <div class="success-msg" id="ul-success"></div>
+    <form id="form-user-login" onsubmit="submitUserLogin(event)">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="ul-email" placeholder="you@email.com" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="ul-password" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-submit" id="ul-btn">
+        <span class="spinner"></span>
+        <span class="btn-text">Sign In</span>
+      </button>
+    </form>
+    <div class="back-link">
+      No account? <a onclick="switchTab('user-register')" style="cursor:pointer">Register free</a>
+    </div>
+  </div>
+
+  <!-- ══ USER REGISTER ═══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-user-register">
+    <p class="panel-title">Create account</p>
+    <p class="panel-sub">Free forever — no credit card needed</p>
+    <div class="error-msg"   id="ur-error"></div>
+    <div class="success-msg" id="ur-success"></div>
+    <form id="form-user-register" onsubmit="submitRegister(event)">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="ur-name" placeholder="Rahul Sharma" required autocomplete="name" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="ur-email" placeholder="you@email.com" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="ur-password" placeholder="Min 6 characters" required autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn-submit" id="ur-btn">
+        <span class="spinner"></span>
+        <span class="btn-text">Create Account</span>
+      </button>
+    </form>
+    <div class="back-link">
+      Already have an account? <a onclick="switchTab('user-login')" style="cursor:pointer">Sign in</a>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN LOGIN ═════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-admin-login">
+    <div class="admin-badge">🛡️ Admin Access Only</div>
+    <p class="panel-title">Admin Sign In</p>
+    <p class="panel-sub">Full access to products, orders & users</p>
+    <div class="creds-hint">
+      Default credentials:<br />
+      <strong>Email:</strong> admin@madhavfashionstudio.com<br />
+      <strong>Password:</strong> admin123
+    </div>
+    <div class="error-msg"   id="al-error"></div>
+    <div class="success-msg" id="al-success"></div>
+    <form id="form-admin-login" onsubmit="submitAdminLogin(event)">
+      <div class="field">
+        <label>Admin Email</label>
+        <input type="email" id="al-email" value="admin@madhavfashionstudio.com" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="al-password" value="admin123" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-submit" id="al-btn">
+        <span class="spinner"></span>
+        <span class="btn-text">Access Admin Panel</span>
+      </button>
+    </form>
+    <div class="back-link">New shop holder? <a onclick="switchTab('admin-register')" style="cursor:pointer">Register here</a></div>
+  </div>
+
+  <div class="tab-panel" id="panel-admin-register">
+    <div class="admin-badge">Shop Holder Registration</div>
+    <p class="panel-title">Create shop-holder account</p>
+    <p class="panel-sub">This account can manage products, prices, stock and orders.</p>
+    <div class="error-msg" id="ar-error"></div>
+    <div class="success-msg" id="ar-success"></div>
+    <form id="form-admin-register" onsubmit="submitAdminRegister(event)">
+      <div class="field"><label>Shop Holder Name</label><input type="text" id="ar-name" placeholder="Your name" required autocomplete="name" /></div>
+      <div class="field"><label>Email</label><input type="email" id="ar-email" placeholder="owner@example.com" required autocomplete="email" /></div>
+      <div class="field"><label>Password</label><input type="password" id="ar-password" placeholder="Min 6 characters" required autocomplete="new-password" /></div>
+      <div class="field"><label>Shop Holder Setup Key</label><input type="password" id="ar-key" placeholder="Provided by the site owner" required autocomplete="off" /></div>
+      <button type="submit" class="btn-submit" id="ar-btn"><span class="spinner"></span><span class="btn-text">Register Shop Holder</span></button>
+    </form>
+    <div class="back-link">Already registered? <a onclick="switchTab('admin-login')" style="cursor:pointer">Admin sign in</a></div>
+  </div>
+
+  <div class="back-link" style="padding: 0 32px 24px;">
+    <a href="store.html">← Back to Store</a>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8010/api';
+
+  /* ── Tab switching ──────────────────────────────────────── */
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', ['user-login','user-register','admin-login','admin-register'][i] === id);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  /* ── Loading state ──────────────────────────────────────── */
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.classList.toggle('loading', loading);
+  }
+
+  function showError(id, msg)   { const el = document.getElementById(id); el.textContent = msg; el.className = 'error-msg show'; }
+  function showSuccess(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.className = 'success-msg show'; }
+  function clearMsgs(...ids)    { ids.forEach(id => { document.getElementById(id).className = document.getElementById(id).className.replace(' show','').replace('error-msg','error-msg').replace('success-msg','success-msg'); document.getElementById(id).classList.remove('show'); }); }
+
+  /* ── User login ─────────────────────────────────────────── */
+  async function submitUserLogin(e) {
+    e.preventDefault();
+    clearMsgs('ul-error', 'ul-success');
+    setLoading('ul-btn', true);
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email:    document.getElementById('ul-email').value,
+          password: document.getElementById('ul-password').value,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Login failed');
+
+      localStorage.setItem('sz_token', data.access_token);
+      localStorage.setItem('sz_user',  JSON.stringify(data.user));
+      showSuccess('ul-success', `Welcome back, ${data.user.name}! Redirecting…`);
+      setTimeout(() => { window.location.href = 'store.html'; }, 1200);
+    } catch (err) {
+      showError('ul-error', err.message);
+    } finally {
+      setLoading('ul-btn', false);
+    }
+  }
+
+  /* ── User register ──────────────────────────────────────── */
+  async function submitRegister(e) {
+    e.preventDefault();
+    clearMsgs('ur-error', 'ur-success');
+    const pass = document.getElementById('ur-password').value;
+    if (pass.length < 6) { showError('ur-error', 'Password must be at least 6 characters'); return; }
+    setLoading('ur-btn', true);
+    try {
+      const res = await fetch(`${API}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:     document.getElementById('ur-name').value,
+          email:    document.getElementById('ur-email').value,
+          password: pass,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Registration failed');
+
+      localStorage.setItem('sz_token', data.access_token);
+      localStorage.setItem('sz_user',  JSON.stringify(data.user));
+      showSuccess('ur-success', `Account created! Welcome, ${data.user.name}! Redirecting…`);
+      setTimeout(() => { window.location.href = 'store.html'; }, 1200);
+    } catch (err) {
+      showError('ur-error', err.message);
+    } finally {
+      setLoading('ur-btn', false);
+    }
+  }
+
+  /* ── Admin login ─────────────────────────────────────────── */
+  async function submitAdminLogin(e) {
+    e.preventDefault();
+    clearMsgs('al-error', 'al-success');
+    setLoading('al-btn', true);
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email:    document.getElementById('al-email').value,
+          password: document.getElementById('al-password').value,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Login failed');
+      if (data.user.role !== 'admin') throw new Error('This account does not have admin access');
+
+      localStorage.setItem('sz_token',      data.access_token);
+      localStorage.setItem('sz_user',       JSON.stringify(data.user));
+      localStorage.setItem('sz_admin_token', data.access_token);
+      showSuccess('al-success', 'Admin verified! Opening dashboard…');
+      setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+    } catch (err) {
+      showError('al-error', err.message);
+    } finally {
+      setLoading('al-btn', false);
+    }
+  }
+
+  async function submitAdminRegister(e) {
+    e.preventDefault();
+    clearMsgs('ar-error', 'ar-success');
+    const password = document.getElementById('ar-password').value;
+    if (password.length < 6) { showError('ar-error', 'Password must be at least 6 characters'); return; }
+    setLoading('ar-btn', true);
+    try {
+      const res = await fetch(`${API}/auth/admin/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('ar-name').value,
+          email: document.getElementById('ar-email').value,
+          password,
+          setup_key: document.getElementById('ar-key').value,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Shop-holder registration failed');
+      localStorage.setItem('sz_token', data.access_token);
+      localStorage.setItem('sz_user', JSON.stringify(data.user));
+      localStorage.setItem('sz_admin_token', data.access_token);
+      showSuccess('ar-success', 'Shop-holder account created! Opening dashboard...');
+      setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+    } catch (err) {
+      showError('ar-error', err.message);
+    } finally {
+      setLoading('ar-btn', false);
+    }
+  }
+
+  /* ── Auto-redirect if already logged in ─────────────────── */
+  window.addEventListener('DOMContentLoaded', () => {
+    const user  = JSON.parse(localStorage.getItem('sz_user') || 'null');
+    const token = localStorage.getItem('sz_token');
+    const dest  = new URLSearchParams(location.search).get('redirect');
+    const tab   = new URLSearchParams(location.search).get('tab');
+    // An explicit admin URL must remain on the admin form, even if a customer
+    // session is already stored in this browser.
+    if (token && user && !tab) {
+      if (user.role === 'admin' && (!dest || dest === 'admin')) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = dest || 'store.html';
+      }
+    }
+    // pre-select admin tab if ?tab=admin
+    if (tab === 'admin') switchTab('admin-login');
+    if (tab === 'admin-register') switchTab('admin-register');
+  });
+</script>
+<script>
+  document.querySelectorAll('input[type="password"]').forEach(function (input) {
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'Show';
+    button.style.cssText = 'float:right;margin-top:-31px;margin-right:10px;position:relative;background:none;border:0;color:#777;font-size:11px;font-weight:700;cursor:pointer;';
+    button.addEventListener('click', function () {
+      var visible = input.type === 'text';
+      input.type = visible ? 'password' : 'text';
+      button.textContent = visible ? 'Show' : 'Hide';
+    });
+    input.parentElement.appendChild(button);
+  });
+</script>
+</body>
+</html>

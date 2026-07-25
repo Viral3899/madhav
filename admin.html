@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Madhav Fashion Studio | Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #0f1117;
+      --bg2:         #1a1d27;
+      --bg3:         #22263a;
+      --surface:     #1e2130;
+      --border:      #2e3347;
+      --border2:     #3d4460;
+      --text:        #e8eaf0;
+      --text2:       #9aa0b8;
+      --text3:       #5c6380;
+      --accent:      #4f7ef8;
+      --accent2:     #3a68e0;
+      --green:       #22c55e;
+      --red:         #ef4444;
+      --orange:      #f97316;
+      --yellow:      #eab308;
+      --radius:      10px;
+      --font:        'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100%;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--font); border: none; }
+    input, select, textarea { font-family: var(--font); }
+    img { display: block; max-width: 100%; }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-logo-icon {
+      width: 34px; height: 34px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .sidebar-logo-text { font-size: 15px; font-weight: 800; letter-spacing: -0.3px; }
+    .sidebar-logo-sub  { font-size: 10px; color: var(--text3); font-weight: 500; letter-spacing: .5px; text-transform: uppercase; }
+    .nav-section { padding: 16px 12px 8px; }
+    .nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); padding: 0 8px 8px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      font-size: 13.5px; font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      margin-bottom: 1px;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item:hover  { background: var(--bg3); color: var(--text); }
+    .nav-item.active { background: rgba(79,126,248,.15); color: var(--accent); font-weight: 600; }
+    .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 99px;
+      min-width: 18px;
+      text-align: center;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 12px;
+      border-top: 1px solid var(--border);
+    }
+    .store-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      background: rgba(34,197,94,.1);
+      color: var(--green);
+      font-size: 13px; font-weight: 600;
+      transition: background .15s;
+      border: 1px solid rgba(34,197,94,.2);
+    }
+    .store-link:hover { background: rgba(34,197,94,.18); }
+
+    /* ── Main ── */
+    .main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .topbar-title { font-size: 17px; font-weight: 700; }
+    .topbar-subtitle { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; white-space: nowrap; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-danger { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+    .btn-danger:hover { background: rgba(239,68,68,.25); }
+    .btn-success { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+    .btn-success:hover { background: rgba(34,197,94,.25); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; background: var(--bg3); color: var(--text2); border: 1px solid var(--border); border-radius: 7px; }
+    .btn-icon:hover { color: var(--text); background: var(--border); }
+
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+    /* ── Pages ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+
+    /* ── Stats cards ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1; }
+    .stat-sub   { font-size: 12px; color: var(--text3); margin-top: 6px; }
+    .stat-card.accent { border-color: rgba(79,126,248,.3); background: rgba(79,126,248,.07); }
+    .stat-card.green  { border-color: rgba(34,197,94,.3);  background: rgba(34,197,94,.07);  }
+    .stat-card.orange { border-color: rgba(249,115,22,.3); background: rgba(249,115,22,.07); }
+    .stat-card.red    { border-color: rgba(239,68,68,.3);  background: rgba(239,68,68,.07);  }
+
+    /* ── Table ── */
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+    .table-title  { font-size: 15px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--border); background: var(--bg2); white-space: nowrap; }
+    tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--bg3); }
+
+    /* ── Product image thumb ── */
+    .prod-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
+    .prod-name-cell { display: flex; align-items: center; gap: 10px; }
+    .prod-name { font-weight: 600; color: var(--text); font-size: 13px; }
+    .prod-sku  { font-size: 11px; color: var(--text3); }
+
+    /* ── Status badges ── */
+    .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .badge-pending   { background: rgba(234,179,8,.15);  color: var(--yellow); }
+    .badge-confirmed { background: rgba(79,126,248,.15); color: var(--accent); }
+    .badge-shipped   { background: rgba(249,115,22,.15); color: var(--orange); }
+    .badge-delivered { background: rgba(34,197,94,.15);  color: var(--green);  }
+    .badge-cancelled { background: rgba(239,68,68,.15);  color: var(--red);    }
+    .badge-admin     { background: rgba(79,126,248,.15); color: var(--accent); }
+    .badge-customer  { background: rgba(34,197,94,.15);  color: var(--green);  }
+    .badge-active    { background: rgba(34,197,94,.15);  color: var(--green);  }
+    .badge-inactive  { background: rgba(239,68,68,.15);  color: var(--red);    }
+
+    /* ── Search input ── */
+    .search-input {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+      padding: 7px 12px; font-size: 13px; color: var(--text); outline: none;
+      font-family: var(--font); width: 200px; transition: border-color .2s;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text3); }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text3); }
+    .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── Modal ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+    .modal-title  { font-size: 16px; font-weight: 700; }
+    .modal-close  { width: 28px; height: 28px; border-radius: 6px; background: var(--bg3); color: var(--text2); border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    .modal-close:hover { color: var(--red); }
+    .modal-body   { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+    .field input, .field select, .field textarea {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+      padding: 9px 12px; font-size: 13px; color: var(--text); outline: none;
+      font-family: var(--font); transition: border-color .2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 999; background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 12px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.4); transform: translateY(20px); opacity: 0; transition: all .3s; pointer-events: none; max-width: 320px; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,.4); color: var(--green); }
+    .toast.error   { border-color: rgba(239,68,68,.4);  color: var(--red);   }
+
+    /* ── Pagination ── */
+    .pagination { display: flex; align-items: center; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--border); }
+    .page-info  { font-size: 12px; color: var(--text3); margin-right: auto; }
+
+    /* ── Loading spinner ── */
+    .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.2); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ AUTH GUARD — runs before render ═════════════════════════ -->
+<script>
+  const API = 'http://localhost:8010/api';
+  const _token = localStorage.getItem('sz_token');
+  const _user  = JSON.parse(localStorage.getItem('sz_user') || 'null');
+  if (!_token || !_user || _user.role !== 'admin') {
+    window.location.replace('login.html?tab=admin');
+  }
+</script>
+
+<!-- ══ TOAST ════════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ PRODUCT MODAL ════════════════════════════════════════════ -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-product-title">Add Product</span>
+      <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mp-id" />
+      <div class="field-row">
+        <div class="field"><label>SKU *</label><input id="mp-sku" placeholder="e.g. e1" /></div>
+        <div class="field"><label>Category *</label>
+          <select id="mp-category">
+            <option value="electronics">Electronics</option>
+            <option value="fashion">Fashion</option>
+            <option value="home">Home</option>
+            <option value="beauty">Beauty</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Product Name *</label><input id="mp-name" placeholder="Full product name" /></div>
+      <div class="field"><label>Description</label><textarea id="mp-desc" rows="3" placeholder="Short description…"></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Price (₹) *</label><input id="mp-price" type="number" placeholder="1999" /></div>
+        <div class="field"><label>MRP / Original (₹)</label><input id="mp-original" type="number" placeholder="2999" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Stock</label><input id="mp-stock" type="number" placeholder="50" /></div>
+        <div class="field"><label>Badge</label><input id="mp-badge" placeholder="e.g. Best Seller" /></div>
+      </div>
+      <div class="field"><label>Images (one URL per line)</label><textarea id="mp-images" rows="3" placeholder="https://...&#10;https://..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Colors (comma separated)</label><input id="mp-colors" placeholder="Black, White, Blue" /></div>
+        <div class="field"><label>Sizes (comma separated)</label><input id="mp-sizes" placeholder="S, M, L, XL" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('product-modal')">Cancel</button>
+      <button class="btn btn-primary" id="save-product-btn" onclick="saveProduct()">
+        <span class="btn-text">Save Product</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ORDER STATUS MODAL ════════════════════════════════════════ -->
+<div class="modal-overlay" id="status-modal">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header">
+      <span class="modal-title">Update Order Status</span>
+      <button class="modal-close" onclick="closeModal('status-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="status-order-id" />
+      <div class="field">
+        <label>Order #<span id="status-order-label"></span></label>
+        <select id="status-select">
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('status-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveOrderStatus()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LAYOUT ═══════════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🛍</div>
+      <div>
+        <div class="sidebar-logo-text">Madhav Fashion Studio</div>
+        <div class="sidebar-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</button>
+      <button class="nav-item" onclick="showPage('products',this)"><span class="nav-icon">📦</span> Products <span class="nav-badge" id="nav-product-count">—</span></button>
+      <button class="nav-item" onclick="showPage('orders',this)"><span class="nav-icon">🧾</span> Orders <span class="nav-badge" id="nav-order-count">—</span></button>
+      <button class="nav-item" onclick="showPage('users',this)"><span class="nav-icon">👥</span> Users</button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;padding:0 10px">
+        Signed in as<br/><strong id="admin-name-label" style="color:var(--text)">Admin</strong>
+      </div>
+      <button class="nav-item" onclick="logout()" style="color:var(--red)"><span class="nav-icon">🚪</span> Log Out</button>
+      <a href="store.html" class="store-link" style="margin-top:8px">🛒 View Store</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-subtitle" id="topbar-subtitle">Welcome back, Admin</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="topbar-action-btn" style="display:none" onclick="openAddProduct()">+ Add Product</button>
+        <button class="btn btn-secondary" onclick="refreshCurrentPage()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ DASHBOARD PAGE ══════════════════════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value" id="stat-revenue">—</div><div class="stat-sub">Excl. cancelled</div></div>
+          <div class="stat-card green"><div class="stat-label">Total Orders</div><div class="stat-value" id="stat-orders">—</div><div class="stat-sub">All time</div></div>
+          <div class="stat-card accent"><div class="stat-label">Products</div><div class="stat-value" id="stat-products">—</div><div class="stat-sub">Active listings</div></div>
+          <div class="stat-card orange"><div class="stat-label">Pending Orders</div><div class="stat-value" id="stat-pending">—</div><div class="stat-sub">Needs action</div></div>
+          <div class="stat-card"><div class="stat-label">Customers</div><div class="stat-value" id="stat-users">—</div><div class="stat-sub">Registered</div></div>
+          <div class="stat-card red"><div class="stat-label">Out of Stock</div><div class="stat-value" id="stat-oos">—</div><div class="stat-sub">Needs restock</div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><span class="table-title">Recent Orders</span></div>
+          <table><thead><tr><th>ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="recent-orders-body"><tr><td colspan="7" class="empty-state"><div class="icon">⏳</div><p>Loading…</p></td></tr></tbody></table>
+        </div>
+      </div>
+
+      <!-- ══ PRODUCTS PAGE ═══════════════════════════════════ -->
+      <div class="page" id="page-products">
+        <div class="table-wrap">
+          <div class="table-header">
+            <span class="table-title">All Products</span>
+            <input class="search-input" placeholder="Search products…" oninput="filterProducts(this.value)" />
+          </div>
+          <table>
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="products-body"><tr><td colspan="7" class="empty-state"><div class="icon">⏳</div><p>Loading…</p></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ ORDERS PAGE ═════════════════════════════════════ -->
+      <div class="page" id="page-orders">
+        <div class="table-wrap">
+          <div class="table-header">
+            <span class="table-title">All Orders</span>
+            <select class="search-input" style="width:160px" onchange="filterOrders(this.value)">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>Customer</th><th>Email</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="orders-body"><tr><td colspan="8" class="empty-state"><div class="icon">⏳</div><p>Loading…</p></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ USERS PAGE ══════════════════════════════════════ -->
+      <div class="page" id="page-users">
+        <div class="table-wrap">
+          <div class="table-header"><span class="table-title">All Users</span></div>
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead>
+            <tbody id="users-body"><tr><td colspan="7" class="empty-state"><div class="icon">⏳</div><p>Loading…</p></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+  /* ══ AUTH ════════════════════════════════════════════════════ */
+  const TOKEN = localStorage.getItem('sz_token');
+  const ADMIN = JSON.parse(localStorage.getItem('sz_user') || 'null');
+  const authH = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
+
+  // Show admin name in sidebar
+  if (ADMIN) {
+    document.getElementById('admin-name-label').textContent = ADMIN.name;
+    document.getElementById('topbar-subtitle').textContent  = `Welcome back, ${ADMIN.name}`;
+  }
+
+  function logout() {
+    localStorage.removeItem('sz_token');
+    localStorage.removeItem('sz_user');
+    localStorage.removeItem('sz_admin_token');
+    window.location.href = 'login.html?tab=admin';
+  }
+
+  /* ══ TOAST ═══════════════════════════════════════════════════ */
+  let _tt;
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    clearTimeout(_tt);
+    _tt = setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  /* ══ PAGE ROUTING ════════════════════════════════════════════ */
+  let currentPage = 'dashboard';
+  function showPage(name, btn) {
+    currentPage = name;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    if (btn) btn.classList.add('active');
+
+    const titles = { dashboard: ['Dashboard','Overview'], products: ['Products','Manage listings'],
+                     orders: ['Orders','Manage orders'], users: ['Users','All registered accounts'] };
+    const [t, s] = titles[name] || [name, ''];
+    document.getElementById('topbar-title').textContent    = t;
+    document.getElementById('topbar-subtitle').textContent = s;
+    document.getElementById('topbar-action-btn').style.display = name === 'products' ? '' : 'none';
+
+    if (name === 'dashboard') loadDashboard();
+    if (name === 'products')  loadProducts();
+    if (name === 'orders')    loadOrders();
+    if (name === 'users')     loadUsers();
+  }
+
+  function refreshCurrentPage() { showPage(currentPage); }
+
+  /* ══ HELPERS ════════════════════════════════════════════════ */
+  const fmt    = n => '₹' + Number(n).toLocaleString('en-IN');
+  const fmtDt  = s => new Date(s).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  const badgeCls = s => ({ pending:'badge-pending', confirmed:'badge-confirmed', shipped:'badge-shipped',
+                             delivered:'badge-delivered', cancelled:'badge-cancelled',
+                             admin:'badge-admin', customer:'badge-customer' }[s] || '');
+
+  /* ══ DASHBOARD ══════════════════════════════════════════════ */
+  async function loadDashboard() {
+    try {
+      const [statsRes, ordersRes] = await Promise.all([
+        fetch(`${API}/admin/stats`, { headers: authH }),
+        fetch(`${API}/orders?limit=8`,  { headers: authH }),
+      ]);
+      const stats  = await statsRes.json();
+      const orders = await ordersRes.json();
+
+      document.getElementById('stat-revenue').textContent  = fmt(stats.total_revenue);
+      document.getElementById('stat-orders').textContent   = stats.total_orders;
+      document.getElementById('stat-products').textContent = stats.total_products;
+      document.getElementById('stat-pending').textContent  = stats.pending_orders;
+      document.getElementById('stat-users').textContent    = stats.total_users;
+      document.getElementById('stat-oos').textContent      = stats.out_of_stock;
+      document.getElementById('nav-product-count').textContent = stats.total_products;
+      document.getElementById('nav-order-count').textContent   = stats.total_orders;
+
+      const tbody = document.getElementById('recent-orders-body');
+      if (!orders.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><p>No orders yet</p></td></tr>'; return; }
+      tbody.innerHTML = orders.map(o => `
+        <tr>
+          <td>#${o.id}</td>
+          <td style="font-weight:600;color:var(--text)">${o.first_name} ${o.last_name}</td>
+          <td>${o.items?.length || 0} items</td>
+          <td style="font-weight:700;color:var(--text)">${fmt(o.total)}</td>
+          <td><span class="badge ${badgeCls(o.status)}">${o.status}</span></td>
+          <td>${fmtDt(o.created_at)}</td>
+          <td><button class="btn btn-sm btn-secondary" onclick="openStatusModal(${o.id},'${o.status}')">Update</button></td>
+        </tr>`).join('');
+    } catch(e) { toast('Failed to load dashboard: ' + e.message, 'error'); }
+  }
+
+  /* ══ PRODUCTS ═══════════════════════════════════════════════ */
+  let allProducts = [];
+  async function loadProducts() {
+    try {
+      const res  = await fetch(`${API}/products?limit=100`);
+      allProducts = await res.json();
+      renderProducts(allProducts);
+    } catch(e) { toast('Failed to load products: ' + e.message, 'error'); }
+  }
+
+  function renderProducts(list) {
+    const tbody = document.getElementById('products-body');
+    if (!list.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="icon">📦</div><p>No products found</p></div></td></tr>'; return; }
+    tbody.innerHTML = list.map(p => `
+      <tr>
+        <td><div class="prod-name-cell">
+          <img class="prod-thumb" src="${p.images?.[0] || ''}" onerror="this.style.display='none'" />
+          <div><div class="prod-name">${p.name}</div><div class="prod-sku">${p.sku}</div></div>
+        </div></td>
+        <td>${p.category}</td>
+        <td><strong style="color:var(--text)">${fmt(p.price)}</strong>${p.original_price ? `<br/><span style="font-size:11px;color:var(--text3);text-decoration:line-through">${fmt(p.original_price)}</span>` : ''}</td>
+        <td><span style="color:${p.stock === 0 ? 'var(--red)' : p.stock < 10 ? 'var(--orange)' : 'var(--green)'};font-weight:700">${p.stock}</span></td>
+        <td>⭐ ${p.rating} <span style="color:var(--text3);font-size:11px">(${p.review_count})</span></td>
+        <td><span class="badge ${p.is_active ? 'badge-active' : 'badge-inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span></td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-secondary" onclick="openEditProduct(${p.id})">Edit</button>
+          <button class="btn btn-sm btn-danger"    onclick="deleteProduct(${p.id},'${p.name.replace(/'/g,"\\'")}')">Delete</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  function filterProducts(q) {
+    const lq = q.toLowerCase();
+    renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(lq) || p.sku.toLowerCase().includes(lq) || p.category.toLowerCase().includes(lq)));
+  }
+
+  function openAddProduct() {
+    document.getElementById('modal-product-title').textContent = 'Add Product';
+    document.getElementById('mp-id').value = '';
+    ['mp-sku','mp-name','mp-desc','mp-price','mp-original','mp-stock','mp-badge','mp-images','mp-colors','mp-sizes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('product-modal').classList.add('open');
+  }
+
+  function openEditProduct(id) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('modal-product-title').textContent = 'Edit Product';
+    document.getElementById('mp-id').value       = p.id;
+    document.getElementById('mp-sku').value      = p.sku;
+    document.getElementById('mp-name').value     = p.name;
+    document.getElementById('mp-desc').value     = p.description || '';
+    document.getElementById('mp-category').value = p.category;
+    document.getElementById('mp-price').value    = p.price;
+    document.getElementById('mp-original').value = p.original_price || '';
+    document.getElementById('mp-stock').value    = p.stock;
+    document.getElementById('mp-badge').value    = p.badge || '';
+    document.getElementById('mp-images').value   = (p.images || []).join('\n');
+    document.getElementById('mp-colors').value   = (p.colors || []).join(', ');
+    document.getElementById('mp-sizes').value    = (p.sizes  || []).join(', ');
+    document.getElementById('product-modal').classList.add('open');
+  }
+
+  async function saveProduct() {
+    const id   = document.getElementById('mp-id').value;
+    const body = {
+      name:           document.getElementById('mp-name').value.trim(),
+      description:    document.getElementById('mp-desc').value.trim(),
+      category:       document.getElementById('mp-category').value,
+      price:          parseFloat(document.getElementById('mp-price').value),
+      original_price: parseFloat(document.getElementById('mp-original').value) || null,
+      stock:          parseInt(document.getElementById('mp-stock').value) || 0,
+      badge:          document.getElementById('mp-badge').value.trim() || null,
+      images:         document.getElementById('mp-images').value.split('\n').map(s=>s.trim()).filter(Boolean),
+      colors:         document.getElementById('mp-colors').value.split(',').map(s=>s.trim()).filter(Boolean),
+      sizes:          document.getElementById('mp-sizes').value.split(',').map(s=>s.trim()).filter(Boolean),
+    };
+    if (!body.name || isNaN(body.price)) { toast('Name and Price are required', 'error'); return; }
+
+    const btn = document.getElementById('save-product-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Saving…';
+
+    try {
+      let res;
+      if (id) {
+        res = await fetch(`${API}/products/${id}`, { method:'PUT', headers: authH, body: JSON.stringify(body) });
+      } else {
+        body.sku = document.getElementById('mp-sku').value.trim();
+        if (!body.sku) { toast('SKU is required', 'error'); return; }
+        res = await fetch(`${API}/products`, { method:'POST', headers: authH, body: JSON.stringify(body) });
+      }
+      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || `HTTP ${res.status}`); }
+      toast(id ? 'Product updated!' : 'Product created!');
+      closeModal('product-modal');
+      loadProducts();
+    } catch(e) { toast(e.message, 'error');
+    } finally { btn.disabled = false; btn.innerHTML = '<span class="btn-text">Save Product</span>'; }
+  }
+
+  async function deleteProduct(id, name) {
+    if (!confirm(`Deactivate "${name}"?`)) return;
+    try {
+      const res = await fetch(`${API}/products/${id}`, { method:'DELETE', headers: authH });
+      if (!res.ok) throw new Error('Delete failed');
+      toast('Product deactivated');
+      loadProducts();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  /* ══ ORDERS ═════════════════════════════════════════════════ */
+  let allOrders = [];
+  async function loadOrders(status = '') {
+    try {
+      const url  = status ? `${API}/orders?status=${status}&limit=100` : `${API}/orders?limit=100`;
+      const res  = await fetch(url, { headers: authH });
+      allOrders  = await res.json();
+      renderOrders(allOrders);
+    } catch(e) { toast('Failed to load orders: ' + e.message, 'error'); }
+  }
+
+  function renderOrders(list) {
+    const tbody = document.getElementById('orders-body');
+    if (!list.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="icon">🧾</div><p>No orders found</p></div></td></tr>'; return; }
+    tbody.innerHTML = list.map(o => `
+      <tr>
+        <td style="font-weight:700;color:var(--text)">#${o.id}</td>
+        <td style="font-weight:600;color:var(--text)">${o.first_name} ${o.last_name}</td>
+        <td style="color:var(--text3)">${o.email}</td>
+        <td>${o.items?.length || 0}</td>
+        <td style="font-weight:700;color:var(--text)">${fmt(o.total)}</td>
+        <td><span class="badge ${badgeCls(o.status)}">${o.status}</span></td>
+        <td>${fmtDt(o.created_at)}</td>
+        <td><button class="btn btn-sm btn-secondary" onclick="openStatusModal(${o.id},'${o.status}')">Status</button></td>
+      </tr>`).join('');
+  }
+
+  function filterOrders(status) { loadOrders(status); }
+
+  function openStatusModal(orderId, currentStatus) {
+    document.getElementById('status-order-id').value    = orderId;
+    document.getElementById('status-order-label').textContent = orderId;
+    document.getElementById('status-select').value      = currentStatus;
+    document.getElementById('status-modal').classList.add('open');
+  }
+
+  async function saveOrderStatus() {
+    const id     = document.getElementById('status-order-id').value;
+    const status = document.getElementById('status-select').value;
+    try {
+      const res = await fetch(`${API}/orders/${id}/status`, {
+        method:'PATCH', headers: authH, body: JSON.stringify({ status })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      toast('Order status updated!');
+      closeModal('status-modal');
+      loadOrders();
+      if (currentPage === 'dashboard') loadDashboard();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  /* ══ USERS ══════════════════════════════════════════════════ */
+  async function loadUsers() {
+    try {
+      const res   = await fetch(`${API}/admin/users?limit=100`, { headers: authH });
+      const users = await res.json();
+      const tbody = document.getElementById('users-body');
+      if (!users.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="icon">👥</div><p>No users found</p></div></td></tr>'; return; }
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td style="font-weight:600;color:var(--text)">${u.name}</td>
+          <td style="color:var(--text3)">${u.email}</td>
+          <td><span class="badge ${badgeCls(u.role)}">${u.role}</span></td>
+          <td><span class="badge ${u.is_active ? 'badge-active' : 'badge-inactive'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+          <td>${fmtDt(u.created_at)}</td>
+          <td><button class="btn btn-sm ${u.is_active ? 'btn-danger' : 'btn-success'}" onclick="toggleUser(${u.id},${u.is_active})">
+            ${u.is_active ? 'Disable' : 'Enable'}
+          </button></td>
+        </tr>`).join('');
+    } catch(e) { toast('Failed to load users: ' + e.message, 'error'); }
+  }
+
+  async function toggleUser(id, isActive) {
+    try {
+      const res = await fetch(`${API}/admin/users/${id}?is_active=${!isActive}`, { method:'PATCH', headers: authH });
+      if (!res.ok) throw new Error('Update failed');
+      toast(`User ${isActive ? 'disabled' : 'enabled'}`);
+      loadUsers();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  /* ══ MODAL ══════════════════════════════════════════════════ */
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+  });
+
+  /* ══ INIT ═══════════════════════════════════════════════════ */
+  loadDashboard();
+</script>
+</body>
+</html>
