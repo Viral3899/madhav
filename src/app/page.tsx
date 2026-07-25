@@ -91,7 +91,7 @@ function HomeContent() {
   return (
     <>
       <Header />
-      <main>
+      <main id="top">
         <section className="market-hero">
           <div className="hero-copy">
             <p className="eyebrow">The everyday fashion destination</p>
@@ -199,7 +199,6 @@ function HomeContent() {
             <small>OFF</small>
           </div>
         </section>
-        <ProductRail />
         <RecommendationsRail />
       </main>
       <Footer />

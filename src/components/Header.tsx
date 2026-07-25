@@ -7,12 +7,12 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import CartDrawer from '@/components/CartDrawer';
 import AuthModal from '@/components/AuthModal';
-import { countryOptions, currencyOptions, useCurrency } from '@/context/CurrencyContext';
+import { countryOptions, useCurrency } from '@/context/CurrencyContext';
 
 export default function Header() {
   const { totalItems, openCart } = useCart();
   const { user, logout } = useAuth();
-  const { currency, country, setCurrency, setCountry } = useCurrency();
+  const { country, setCountry } = useCurrency();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -71,18 +71,6 @@ export default function Header() {
             </button>
           </form>
           <div className="header-actions">
-            <select
-              aria-label="Currency"
-              className="currency-select"
-              value={currency}
-              onChange={(event) => setCurrency(event.target.value as typeof currency)}
-            >
-              {currencyOptions.map((option) => (
-                <option key={option.code} value={option.code}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
             <Link href="/wishlist" className="wishlist-link" aria-label="Wishlist" title="Wishlist">
               ♥
             </Link>
