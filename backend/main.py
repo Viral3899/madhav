@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from database import Base, SessionLocal, engine
 from models import Product, User, UserRole
 from routes.auth import hash_password
-from routes import auth, products, orders, admin
+from routes import auth, products, orders, admin, recommendations, search
 
 
 # ════════════════════════════════════════════════════════════════
@@ -417,6 +417,8 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(admin.router)
+app.include_router(recommendations.router)
+app.include_router(search.router)
 
 # ── Health check ───────────────────────────────────────────────
 @app.get("/", tags=["health"])

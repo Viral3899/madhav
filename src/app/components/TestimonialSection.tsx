@@ -104,7 +104,7 @@ export default function TestimonialsSection() {
 
             {/* Quote */}
             <blockquote className="font-display text-xl sm:text-2xl md:text-4xl font-light italic leading-tight max-w-3xl text-primary-foreground">
-              "{t?.quote}"
+              &quot;{t?.quote}&quot;
             </blockquote>
 
             {/* Product tag */}

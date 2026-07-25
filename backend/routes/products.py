@@ -26,6 +26,7 @@ from schemas import (
     ReviewCreate, ReviewOut,
 )
 from routes.auth import get_current_user, require_admin
+from search_service import search_ids
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
@@ -67,13 +68,18 @@ def list_products(
         qs = qs.filter(func.lower(Product.category) == "fashion")
 
     if q:
+        indexed_ids = None
+        try:
+            indexed_ids = search_ids(q, limit=limit)
+        except Exception:
+            indexed_ids = None
+        if indexed_ids is not None:
+            qs = qs.filter(Product.id.in_(indexed_ids))
+        else:
+            indexed_ids = None
         like = f"%{q.lower()}%"
-        qs = qs.filter(
-            or_(
-                func.lower(Product.name).contains(q.lower()),
-                func.lower(Product.description).contains(q.lower()),
-            )
-        )
+        if indexed_ids is None:
+            qs = qs.filter(or_(func.lower(Product.name).contains(q.lower()), func.lower(Product.description).contains(q.lower())))
 
     if sort == "price_asc":
         qs = qs.order_by(Product.price.asc())

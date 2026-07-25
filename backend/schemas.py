@@ -176,6 +176,11 @@ class UserOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+
 class Token(BaseModel):
     access_token: str
     token_type:   str = "bearer"

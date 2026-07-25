@@ -119,7 +119,9 @@ export default function CartDrawer() {
                         <Icon name="PlusIcon" size={14} variant="outline" />
                       </button>
                     </div>
-                    <span className="price-tag">{formatCurrency(item?.price * item?.quantity)}</span>
+                    <span className="price-tag">
+                      {formatCurrency(item?.price * item?.quantity)}
+                    </span>
                   </div>
                 </div>
               </div>

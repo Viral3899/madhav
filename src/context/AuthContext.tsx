@@ -21,7 +21,13 @@ interface AuthContextType {
   closeAuth: () => void;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  registerShopHolder: (name: string, email: string, password: string, setupKey: string) => Promise<void>;
+  registerShopHolder: (
+    name: string,
+    email: string,
+    password: string,
+    setupKey: string
+  ) => Promise<void>;
+  updateProfile: (name: string, email: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -82,18 +88,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data.user);
   }, []);
 
-  const registerShopHolder = useCallback(async (name: string, email: string, password: string, setupKey: string) => {
-    const res = await fetch(`${API}/auth/admin/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, setup_key: setupKey }),
+  const registerShopHolder = useCallback(
+    async (name: string, email: string, password: string, setupKey: string) => {
+      const res = await fetch(`${API}/auth/admin/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, setup_key: setupKey }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Shop-holder registration failed');
+      localStorage.setItem('sz_token', data.access_token);
+      localStorage.setItem('sz_user', JSON.stringify(data.user));
+      setToken(data.access_token);
+      setUser(data.user);
+    },
+    []
+  );
+
+  const updateProfile = useCallback(async (name: string, email: string) => {
+    const res = await fetch(`${API}/auth/me`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('sz_token') || ''}`,
+      },
+      body: JSON.stringify({ name, email }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || 'Shop-holder registration failed');
-    localStorage.setItem('sz_token', data.access_token);
-    localStorage.setItem('sz_user', JSON.stringify(data.user));
-    setToken(data.access_token);
-    setUser(data.user);
+    if (!res.ok) throw new Error(data.detail || 'Unable to update profile');
+    localStorage.setItem('sz_user', JSON.stringify(data));
+    setUser(data);
   }, []);
 
   const logout = useCallback(() => {
@@ -115,6 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         registerShopHolder,
+        updateProfile,
         logout,
       }}
     >

@@ -175,7 +175,6 @@ export default function HeroSection() {
               priority
               sizes="(max-width: 768px) 100vw, 58vw"
               className="object-cover"
-              // @ts-ignore - ref for GSAP
               ref={imageRef}
             />
 

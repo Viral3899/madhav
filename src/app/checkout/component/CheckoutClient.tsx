@@ -21,6 +21,7 @@ interface FormData {
   cardExpiry: string;
   cardCvc: string;
   cardName: string;
+  paymentMethod: 'card' | 'upi' | 'cod';
 }
 
 const SHIPPING_THRESHOLD = 499;
@@ -43,6 +44,7 @@ export default function CheckoutClient() {
     cardExpiry: '',
     cardCvc: '',
     cardName: '',
+    paymentMethod: 'card',
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isProcessing, setIsProcessing] = useState(false);
@@ -54,9 +56,9 @@ export default function CheckoutClient() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof FormData]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -69,10 +71,13 @@ export default function CheckoutClient() {
     if (!form.city.trim()) newErrors.city = 'Required';
     if (!form.state.trim()) newErrors.state = 'Required';
     if (!form.zip.trim()) newErrors.zip = 'Required';
-    if (form.cardNumber.replace(/\s/g, '').length < 16) newErrors.cardNumber = 'Valid card number required';
-    if (!form.cardExpiry.includes('/')) newErrors.cardExpiry = 'MM/YY format';
-    if (form.cardCvc.length < 3) newErrors.cardCvc = 'Required';
-    if (!form.cardName.trim()) newErrors.cardName = 'Required';
+    if (form.paymentMethod === 'card') {
+      if (form.cardNumber.replace(/\s/g, '').length < 16)
+        newErrors.cardNumber = 'Valid card number required';
+      if (!form.cardExpiry.includes('/')) newErrors.cardExpiry = 'MM/YY format';
+      if (form.cardCvc.length < 3) newErrors.cardCvc = 'Required';
+      if (!form.cardName.trim()) newErrors.cardName = 'Required';
+    }
     return newErrors;
   };
 
@@ -97,7 +102,7 @@ export default function CheckoutClient() {
           state: form.state,
           zip_code: form.zip,
           country: form.country,
-          items: items.map(item => ({
+          items: items.map((item) => ({
             product_id: Number(item.id),
             quantity: item.quantity,
             color: item.color,
@@ -124,7 +129,7 @@ export default function CheckoutClient() {
           Order Confirmed!
         </h1>
         <p className="text-muted-foreground text-base mb-3 max-w-md mx-auto">
-          Thanks {form.firstName}! Your order is on its way. You'll receive a confirmation at{' '}
+          Thanks {form.firstName}! Your order is on its way. You&apos;ll receive a confirmation at{' '}
           <span className="text-foreground font-medium">{form.email}</span>.
         </p>
         <p className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground mb-10">
@@ -146,9 +151,13 @@ export default function CheckoutClient() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-muted-foreground mb-8 sm:mb-10">
-        <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+        <Link href="/" className="hover:text-foreground transition-colors">
+          Home
+        </Link>
         <Icon name="ChevronRightIcon" size={12} variant="outline" />
-        <Link href="/products" className="hover:text-foreground transition-colors">Shop</Link>
+        <Link href="/products" className="hover:text-foreground transition-colors">
+          Shop
+        </Link>
         <Icon name="ChevronRightIcon" size={12} variant="outline" />
         <span className="text-foreground">Checkout</span>
       </nav>
@@ -158,7 +167,9 @@ export default function CheckoutClient() {
         <div className="lg:col-span-7">
           <div className="flex items-center gap-2 sm:gap-3 mb-8 sm:mb-10">
             <AppLogo size={24} />
-            <span className="font-display text-lg sm:text-2xl font-semibold tracking-[0.1em] sm:tracking-[0.15em] uppercase text-foreground">Madhav Fashion Studio</span>
+            <span className="font-display text-lg sm:text-2xl font-semibold tracking-[0.1em] sm:tracking-[0.15em] uppercase text-foreground">
+              Madhav Fashion Studio
+            </span>
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
@@ -200,7 +211,9 @@ export default function CheckoutClient() {
                       className="checkout-input"
                       autoComplete="given-name"
                     />
-                    {errors.firstName && <p className="text-red-500 text-[11px] mt-1">{errors.firstName}</p>}
+                    {errors.firstName && (
+                      <p className="text-red-500 text-[11px] mt-1">{errors.firstName}</p>
+                    )}
                   </div>
                   <div>
                     <input
@@ -212,7 +225,9 @@ export default function CheckoutClient() {
                       className="checkout-input"
                       autoComplete="family-name"
                     />
-                    {errors.lastName && <p className="text-red-500 text-[11px] mt-1">{errors.lastName}</p>}
+                    {errors.lastName && (
+                      <p className="text-red-500 text-[11px] mt-1">{errors.lastName}</p>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -225,7 +240,9 @@ export default function CheckoutClient() {
                     className="checkout-input"
                     autoComplete="street-address"
                   />
-                  {errors.address && <p className="text-red-500 text-[11px] mt-1">{errors.address}</p>}
+                  {errors.address && (
+                    <p className="text-red-500 text-[11px] mt-1">{errors.address}</p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div className="col-span-2">
@@ -250,7 +267,9 @@ export default function CheckoutClient() {
                       className="checkout-input"
                       autoComplete="address-level1"
                     />
-                    {errors.state && <p className="text-red-500 text-[11px] mt-1">{errors.state}</p>}
+                    {errors.state && (
+                      <p className="text-red-500 text-[11px] mt-1">{errors.state}</p>
+                    )}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -289,74 +308,103 @@ export default function CheckoutClient() {
                 Payment
               </h2>
               <div className="border border-border rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-6">
-                <div className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
-                  <Icon name="LockClosedIcon" size={13} variant="outline" />
-                  SSL Secured · Mock Payment
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    name="cardNumber"
-                    value={form.cardNumber}
-                    onChange={e => {
-                      let v = e.target.value.replace(/\D/g, '').slice(0, 16);
-                      const formatted = v.replace(/(\d{4})(?=\d)/g, '$1 ');
-                      setForm(prev => ({ ...prev, cardNumber: formatted }));
-                    }}
-                    placeholder="Card number"
-                    className="checkout-input"
-                    autoComplete="cc-number"
-                    maxLength={19}
-                  />
-                  {errors.cardNumber && <p className="text-red-500 text-[11px] mt-1">{errors.cardNumber}</p>}
-                </div>
-                <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <input
-                      type="text"
-                      name="cardExpiry"
-                      value={form.cardExpiry}
-                      onChange={e => {
-                        let v = e.target.value.replace(/\D/g, '').slice(0, 4);
-                        if (v.length >= 2) v = v.slice(0, 2) + '/' + v.slice(2);
-                        setForm(prev => ({ ...prev, cardExpiry: v }));
-                      }}
-                      placeholder="MM / YY"
-                      className="checkout-input"
-                      autoComplete="cc-exp"
-                      maxLength={5}
-                    />
-                    {errors.cardExpiry && <p className="text-red-500 text-[11px] mt-1">{errors.cardExpiry}</p>}
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="cardCvc"
-                      value={form.cardCvc}
-                      onChange={e => {
-                        let v = e.target.value.replace(/\D/g, '').slice(0, 4);
-                        setForm(prev => ({ ...prev, cardCvc: v }));
-                      }}
-                      placeholder="CVC"
-                      className="checkout-input"
-                      autoComplete="cc-csc"
-                      maxLength={4}
-                    />
-                    {errors.cardCvc && <p className="text-red-500 text-[11px] mt-1">{errors.cardCvc}</p>}
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    name="cardName"
-                    value={form.cardName}
-                    onChange={handleChange}
-                    placeholder="Name on card"
-                    className="checkout-input"
-                    autoComplete="cc-name"
-                  />
-                  {errors.cardName && <p className="text-red-500 text-[11px] mt-1">{errors.cardName}</p>}
-                </div>
+                <select
+                  name="paymentMethod"
+                  value={form.paymentMethod}
+                  onChange={handleChange}
+                  className="checkout-input cursor-pointer"
+                >
+                  <option value="card">Credit / Debit card</option>
+                  <option value="upi">UPI (demo)</option>
+                  <option value="cod">Cash on delivery</option>
+                </select>
+                {form.paymentMethod !== 'card' && (
+                  <p className="text-xs text-muted-foreground">
+                    {form.paymentMethod === 'upi'
+                      ? 'UPI checkout is ready for provider integration.'
+                      : 'Cash on delivery will be collected at delivery.'}
+                  </p>
+                )}
+                {form.paymentMethod === 'card' && (
+                  <>
+                    <div className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
+                      <Icon name="LockClosedIcon" size={13} variant="outline" />
+                      SSL Secured · Mock Payment
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="cardNumber"
+                        value={form.cardNumber}
+                        onChange={(e) => {
+                          const v = e.target.value.replace(/\D/g, '').slice(0, 16);
+                          const formatted = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+                          setForm((prev) => ({ ...prev, cardNumber: formatted }));
+                        }}
+                        placeholder="Card number"
+                        className="checkout-input"
+                        autoComplete="cc-number"
+                        maxLength={19}
+                      />
+                      {errors.cardNumber && (
+                        <p className="text-red-500 text-[11px] mt-1">{errors.cardNumber}</p>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                      <div>
+                        <input
+                          type="text"
+                          name="cardExpiry"
+                          value={form.cardExpiry}
+                          onChange={(e) => {
+                            let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+                            if (v.length >= 2) v = v.slice(0, 2) + '/' + v.slice(2);
+                            setForm((prev) => ({ ...prev, cardExpiry: v }));
+                          }}
+                          placeholder="MM / YY"
+                          className="checkout-input"
+                          autoComplete="cc-exp"
+                          maxLength={5}
+                        />
+                        {errors.cardExpiry && (
+                          <p className="text-red-500 text-[11px] mt-1">{errors.cardExpiry}</p>
+                        )}
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          name="cardCvc"
+                          value={form.cardCvc}
+                          onChange={(e) => {
+                            const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+                            setForm((prev) => ({ ...prev, cardCvc: v }));
+                          }}
+                          placeholder="CVC"
+                          className="checkout-input"
+                          autoComplete="cc-csc"
+                          maxLength={4}
+                        />
+                        {errors.cardCvc && (
+                          <p className="text-red-500 text-[11px] mt-1">{errors.cardCvc}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="cardName"
+                        value={form.cardName}
+                        onChange={handleChange}
+                        placeholder="Name on card"
+                        className="checkout-input"
+                        autoComplete="cc-name"
+                      />
+                      {errors.cardName && (
+                        <p className="text-red-500 text-[11px] mt-1">{errors.cardName}</p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -382,9 +430,15 @@ export default function CheckoutClient() {
             {submitError && <p className="text-red-500 text-sm text-center mt-3">{submitError}</p>}
 
             <p className="text-center text-[11px] text-muted-foreground mt-4">
-              By placing your order you agree to Madhav Fashion Studio's{' '}
-              <Link href="/" className="underline hover:text-foreground transition-colors">Terms</Link> and{' '}
-              <Link href="/" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+              By placing your order you agree to Madhav Fashion Studio&apos;s{' '}
+              <Link href="/" className="underline hover:text-foreground transition-colors">
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link href="/" className="underline hover:text-foreground transition-colors">
+                Privacy Policy
+              </Link>
+              .
             </p>
           </form>
         </div>
@@ -400,14 +454,22 @@ export default function CheckoutClient() {
             <div className="space-y-4 mb-6 max-h-[360px] overflow-y-auto pr-2">
               {items.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="font-display text-lg italic text-muted-foreground">Your bag is empty</p>
-                  <Link href="/products" className="text-[11px] tracking-[0.2em] uppercase text-accent hover:underline mt-3 inline-block">
+                  <p className="font-display text-lg italic text-muted-foreground">
+                    Your bag is empty
+                  </p>
+                  <Link
+                    href="/products"
+                    className="text-[11px] tracking-[0.2em] uppercase text-accent hover:underline mt-3 inline-block"
+                  >
                     Browse products
                   </Link>
                 </div>
               ) : (
-                items.map(item => (
-                  <div key={`${item.id}-${item.size}`} className="flex gap-4 pb-4 border-b border-border last:border-0">
+                items.map((item) => (
+                  <div
+                    key={`${item.id}-${item.size}`}
+                    className="flex gap-4 pb-4 border-b border-border last:border-0"
+                  >
                     <div className="relative w-16 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-secondary">
                       <AppImage
                         src={item.image}
@@ -423,7 +485,9 @@ export default function CheckoutClient() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-foreground leading-tight">{item.name}</h3>
+                      <h3 className="text-sm font-semibold text-foreground leading-tight">
+                        {item.name}
+                      </h3>
                       <p className="text-[11px] tracking-wide uppercase text-muted-foreground mt-0.5">
                         {item.color} · {item.size}
                       </p>
@@ -453,7 +517,9 @@ export default function CheckoutClient() {
               )}
               <div className="flex justify-between items-center pt-3 border-t border-border">
                 <span className="text-base font-semibold text-foreground">Total</span>
-                <span className="font-display text-2xl italic font-semibold">{formatCurrency(total)}</span>
+                <span className="font-display text-2xl italic font-semibold">
+                  {formatCurrency(total)}
+                </span>
               </div>
             </div>
 
@@ -463,10 +529,17 @@ export default function CheckoutClient() {
                 { icon: 'LockClosedIcon', label: 'Secure' },
                 { icon: 'TruckIcon', label: 'Fast Ship' },
                 { icon: 'ArrowPathIcon', label: 'Free Returns' },
-              ].map(b => (
+              ].map((b) => (
                 <div key={b.label} className="flex flex-col items-center gap-1.5 text-center">
-                  <Icon name={b.icon as Parameters<typeof Icon>[0]['name']} size={16} variant="outline" className="text-muted-foreground" />
-                  <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground">{b.label}</span>
+                  <Icon
+                    name={b.icon as Parameters<typeof Icon>[0]['name']}
+                    size={16}
+                    variant="outline"
+                    className="text-muted-foreground"
+                  />
+                  <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground">
+                    {b.label}
+                  </span>
                 </div>
               ))}
             </div>

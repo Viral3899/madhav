@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from models import User, UserRole
-from schemas import AdminRegister, Token, UserLogin, UserOut, UserRegister, MessageResponse
+from schemas import AdminRegister, Token, UserLogin, UserOut, UserRegister, UserUpdate, MessageResponse
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -153,6 +153,17 @@ def login_form(
 @router.get("/me", response_model=UserOut)
 def me(current_user: User = Depends(get_current_user)):
     """Return the currently authenticated user."""
+    return current_user
+
+
+@router.patch("/me", response_model=UserOut)
+def update_me(payload: UserUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if payload.email and payload.email != current_user.email and db.query(User).filter(User.email == payload.email).first():
+        raise HTTPException(status_code=409, detail="Email already registered")
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(current_user, field, value)
+    db.commit()
+    db.refresh(current_user)
     return current_user
 
 

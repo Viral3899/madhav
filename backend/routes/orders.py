@@ -104,6 +104,15 @@ def place_order(
     )
 
 
+@router.get("/mine", response_model=List[OrderOut])
+def my_orders(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return (
+        db.query(Order).options(joinedload(Order.items).joinedload(OrderItem.product))
+        .filter((Order.user_id == current_user.id) | (Order.email == current_user.email))
+        .order_by(Order.created_at.desc()).all()
+    )
+
+
 # ── Get single order ───────────────────────────────────────────
 @router.get("/{order_id}", response_model=OrderOut)
 def get_order(

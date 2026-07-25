@@ -120,7 +120,7 @@ export default function BrandStorySection() {
 
           <div ref={contentRef} className="opacity-100">
             <p className="text-base sm:text-lg font-light leading-relaxed max-w-xl text-white/70 border-l border-white/20 pl-4 sm:pl-6 mb-8 sm:mb-10">
-              Madhav Fashion Studio was built on a simple belief: India's rich textile heritage
+              Madhav Fashion Studio was built on a simple belief: India&apos;s rich textile heritage
               deserves to be worn every day, not just on special occasions. We bring you authentic
               handcrafted apparel — from Banarasi silks to block-printed cottons — at prices that
               respect your budget.

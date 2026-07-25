@@ -1,5 +1,51 @@
 import React from 'react';
 import Link from 'next/link';
 
-const groups = [['Get to know us', 'About Madhav Fashion Studio', 'Careers', 'Press releases', 'Our story'], ['Make money with us', 'Sell on Madhav', 'Protect your brand', 'Become an affiliate', 'Advertise your products'], ['Let us help you', 'Your account', 'Shipping rates', 'Returns centre', 'Help centre'], ['Madhav payment', 'Madhav Pay', 'Gift cards', 'EMI options', 'Secure payments']];
-export default function Footer() { return <footer className="market-footer"><div className="back-top"><a href="#top">Back to top</a></div><div className="footer-main"><div className="footer-brand"><Link href="/" className="market-logo"><span className="logo-mark">M</span><span>Madhav Fashion Studio<small>.in</small></span></Link><p>Everything you need, delivered with care.</p></div><div className="footer-links">{groups.map(([heading, ...links]) => <div key={heading}><h3>{heading}</h3>{links.map(link => <Link href="/" key={link}>{link}</Link>)}</div>)}</div></div><div className="footer-bottom"><span>© 2026 Madhav Fashion Studio. All rights reserved.</span><span>Conditions of use &nbsp; Privacy notice &nbsp; Cookie preferences</span></div></footer>; }
+const groups = [
+  ['Get to know us', 'About Madhav Fashion Studio', 'Careers', 'Press releases', 'Our story'],
+  [
+    'Make money with us',
+    'Sell on Madhav',
+    'Protect your brand',
+    'Become an affiliate',
+    'Advertise your products',
+  ],
+  ['Let us help you', 'Your account', 'Shipping rates', 'Returns centre', 'Help centre'],
+  ['Madhav payment', 'Madhav Pay', 'Gift cards', 'EMI options', 'Secure payments'],
+];
+export default function Footer() {
+  return (
+    <footer className="market-footer">
+      <div className="back-top">
+        <a href="#top">Back to top</a>
+      </div>
+      <div className="footer-main">
+        <div className="footer-brand">
+          <Link href="/" className="market-logo">
+            <span className="logo-mark">M</span>
+            <span>
+              Madhav Fashion Studio<small>.in</small>
+            </span>
+          </Link>
+          <p>Everything you need, delivered with care.</p>
+        </div>
+        <div className="footer-links">
+          {groups.map(([heading, ...links]) => (
+            <div key={heading}>
+              <h3>{heading}</h3>
+              {links.map((link) => (
+                <Link href="/" key={link}>
+                  {link}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="footer-bottom">
+        <span>© 2026 Madhav Fashion Studio. All rights reserved.</span>
+        <span>Conditions of use &nbsp; Privacy notice &nbsp; Cookie preferences</span>
+      </div>
+    </footer>
+  );
+}

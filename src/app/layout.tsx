@@ -2,8 +2,10 @@ import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import { DM_Sans, Fraunces } from 'next/font/google';
 import '../styles/tailwind.css';
+import '../styles/marketplace-overrides.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -44,7 +46,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${dmSans.variable} ${fraunces.variable}`}>
       <body className={dmSans.className}>
-        <AuthProvider><CurrencyProvider>{children}</CurrencyProvider></AuthProvider>
+        <AuthProvider>
+          <CurrencyProvider>
+            <WishlistProvider>{children}</WishlistProvider>
+          </CurrencyProvider>
+        </AuthProvider>
 
         <script
           type="module"

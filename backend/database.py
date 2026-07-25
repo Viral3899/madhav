@@ -1,32 +1,33 @@
-"""
-database.py — SQLAlchemy engine, session factory, and Base
-Database: SQLite (shopzone.db) stored next to this file
-"""
+"""SQLAlchemy engine, sessions, and configurable database connection."""
 
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-# ── DB path ────────────────────────────────────────────────────────────────
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH  = os.path.join(BASE_DIR, "shopzone.db")
-DATABASE_URL = f"sqlite:///{DB_PATH}"
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR.parent / '.env')
+load_dotenv(BASE_DIR / '.env')
 
-# ── Engine ─────────────────────────────────────────────────────────────────
+DB_PATH = BASE_DIR / 'shopzone.db'
+DATABASE_URL = os.getenv('DATABASE_URL', f'sqlite:///{DB_PATH}')
+IS_SQLITE = DATABASE_URL.startswith('sqlite')
+
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False},  # required for SQLite + FastAPI
-    echo=False,   # set True to see SQL queries in console
+    connect_args={'check_same_thread': False} if IS_SQLITE else {},
+    pool_pre_ping=True,
+    echo=False,
 )
-
-# ── Session factory ────────────────────────────────────────────────────────
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# ── Base class for all ORM models ──────────────────────────────────────────
+
 class Base(DeclarativeBase):
     pass
 
-# ── FastAPI dependency — yields a DB session per request ───────────────────
+
 def get_db():
     db = SessionLocal()
     try:

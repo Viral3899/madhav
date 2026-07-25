@@ -183,7 +183,20 @@ export default function AuthModal() {
                     autoComplete="current-password"
                     className="w-full bg-secondary border border-border rounded-lg px-4 py-3 pr-16 text-[14px] text-foreground placeholder:text-muted-foreground outline-none focus:border-accent transition-colors"
                   />
-                  <button type="button" onClick={() => setShowLoginPassword(value => !value)} className="relative float-right -mt-8 mr-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground">{showLoginPassword ? 'Hide' : 'Show'}</button>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword((value) => !value)}
+                    className="relative float-right -mt-8 mr-3 text-muted-foreground hover:text-foreground"
+                    aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {
+                      <Icon
+                        name={showLoginPassword ? 'EyeSlashIcon' : 'EyeIcon'}
+                        size={17}
+                        variant="outline"
+                      />
+                    }
+                  </button>
                 </div>
                 <button
                   type="submit"
@@ -249,7 +262,20 @@ export default function AuthModal() {
                     autoComplete="new-password"
                     className="w-full bg-secondary border border-border rounded-lg px-4 py-3 pr-16 text-[14px] text-foreground placeholder:text-muted-foreground outline-none focus:border-accent transition-colors"
                   />
-                  <button type="button" onClick={() => setShowRegisterPassword(value => !value)} className="relative float-right -mt-8 mr-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground">{showRegisterPassword ? 'Hide' : 'Show'}</button>
+                  <button
+                    type="button"
+                    onClick={() => setShowRegisterPassword((value) => !value)}
+                    className="relative float-right -mt-8 mr-3 text-muted-foreground hover:text-foreground"
+                    aria-label={showRegisterPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {
+                      <Icon
+                        name={showRegisterPassword ? 'EyeSlashIcon' : 'EyeIcon'}
+                        size={17}
+                        variant="outline"
+                      />
+                    }
+                  </button>
                 </div>
                 <button
                   type="submit"

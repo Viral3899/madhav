@@ -1,0 +1,271 @@
+.catalog-card {
+  position: relative;
+}
+.catalog-wishlist {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #59636e;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 1px 5px #0002;
+}
+.catalog-wishlist.saved {
+  color: #cc0c39;
+}
+.wishlist-page {
+  max-width: 1250px;
+  min-height: 60vh;
+  margin: auto;
+  padding: 24px clamp(16px, 4vw, 60px) 70px;
+  background: #fff;
+}
+.wishlist-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 32px 0;
+}
+.wishlist-heading h1 {
+  font-size: 34px;
+  font-weight: 800;
+}
+.wishlist-heading > div > p:last-child {
+  margin-top: 7px;
+  color: #59636e;
+  font-size: 13px;
+}
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.wishlist-card {
+  position: relative;
+  padding-bottom: 16px;
+}
+.wishlist-card img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  background: #f3f3f3;
+}
+.wishlist-card h2 {
+  margin-top: 10px;
+  font-size: 14px;
+}
+.wishlist-card > p {
+  margin: 6px 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.wishlist-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 5px 8px;
+  border: 0;
+  background: #fff;
+  color: #cc0c39;
+  font-size: 10px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .wishlist-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .wishlist-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .wishlist-card img {
+    height: 200px;
+  }
+}
+.account-page,
+.orders-page {
+  max-width: 1250px;
+  min-height: 65vh;
+  margin: auto;
+  padding: 25px clamp(16px, 4vw, 60px) 70px;
+  background: #fff;
+}
+.account-breadcrumb {
+  color: #59636e;
+  font-size: 12px;
+}
+.account-breadcrumb a {
+  color: #1769aa;
+}
+.account-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 35px;
+  margin-top: 35px;
+}
+.account-layout aside {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  background: #f3f3f3;
+}
+.account-layout aside h1 {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+.account-layout aside a,
+.account-layout aside button {
+  color: #1769aa;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+}
+.account-layout aside button {
+  color: #cc0c39;
+}
+.account-card {
+  max-width: 650px;
+  padding: 28px;
+  border: 1px solid #d5d9d9;
+}
+.account-card h2 {
+  font-size: 24px;
+}
+.account-muted {
+  margin: 8px 0 22px;
+  color: #59636e;
+  font-size: 13px;
+}
+.account-card form {
+  display: grid;
+  gap: 17px;
+}
+.account-card label {
+  display: grid;
+  gap: 6px;
+  color: #39434d;
+  font-size: 12px;
+  font-weight: 700;
+}
+.account-card input {
+  padding: 11px;
+  border: 1px solid #aeb4b7;
+  border-radius: 3px;
+  font-size: 14px;
+}
+.account-success {
+  color: #16846b;
+  font-size: 12px;
+}
+.account-error {
+  color: #cc0c39;
+  font-size: 12px;
+}
+.orders-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 32px 0;
+}
+.orders-heading h1 {
+  font-size: 34px;
+}
+.order-list {
+  display: grid;
+  gap: 17px;
+}
+.order-card {
+  border: 1px solid #d5d9d9;
+}
+.order-card-head {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 24px;
+  align-items: center;
+  padding: 15px 18px;
+  background: #f3f3f3;
+  font-size: 13px;
+}
+.order-card-head div {
+  display: grid;
+  gap: 4px;
+}
+.order-card-head span {
+  color: #59636e;
+  font-size: 11px;
+}
+.order-status {
+  padding: 5px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  text-transform: capitalize;
+}
+.status-pending {
+  background: #fff1dc;
+  color: #b45b00;
+}
+.status-confirmed,
+.status-shipped {
+  background: #e1f5ef;
+  color: #16846b;
+}
+.status-delivered {
+  background: #dff4e4;
+  color: #14733f;
+}
+.order-items {
+  padding: 12px 18px;
+}
+.order-items > div {
+  display: grid;
+  grid-template-columns: 45px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 12px;
+}
+.order-items img {
+  width: 45px;
+  height: 52px;
+  object-fit: cover;
+  background: #f3f3f3;
+}
+.order-items b {
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .account-layout {
+    display: block;
+  }
+  .account-layout aside {
+    margin-bottom: 18px;
+  }
+  .account-card {
+    padding: 18px;
+  }
+  .order-card-head {
+    grid-template-columns: 1fr auto;
+  }
+  .order-card-head > b:last-child {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .order-items > div {
+    grid-template-columns: 42px 1fr;
+  }
+  .order-items b {
+    grid-column: 2;
+  }
+}
