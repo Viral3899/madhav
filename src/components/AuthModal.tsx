@@ -6,7 +6,7 @@ import Icon from '@/components/ui/AppIcon';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AuthModal() {
-  const { isAuthOpen, authTab, closeAuth, login, register, openAuth } = useAuth();
+  const { isAuthOpen, authTab, closeAuth, login, register } = useAuth();
   const [tab, setTab] = useState<'login' | 'register'>(authTab);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -40,8 +40,8 @@ export default function AuthModal() {
       await login(lEmail, lPassword);
       setSuccess('Welcome back! 🎉');
       setTimeout(closeAuth, 1000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unable to sign in');
     } finally {
       setLoading(false);
     }
@@ -59,8 +59,8 @@ export default function AuthModal() {
       await register(rName, rEmail, rPassword);
       setSuccess(`Welcome, ${rName}! Account created 🎉`);
       setTimeout(closeAuth, 1000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unable to create account');
     } finally {
       setLoading(false);
     }

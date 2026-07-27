@@ -18,6 +18,7 @@ export interface ApiProduct {
   specs: Record<string, string>;
   rating: number;
   review_count: number;
+  reviewCount?: number;
   is_active: boolean;
 }
 

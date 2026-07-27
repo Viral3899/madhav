@@ -166,7 +166,7 @@ export default function CheckoutClient() {
         {/* Form Column */}
         <div className="lg:col-span-7">
           <div className="flex items-center gap-2 sm:gap-3 mb-8 sm:mb-10">
-            <AppLogo size={24} />
+            <AppLogo href="/" size={24} />
             <span className="font-display text-lg sm:text-2xl font-semibold tracking-[0.1em] sm:tracking-[0.15em] uppercase text-foreground">
               Madhav Fashion Studio
             </span>

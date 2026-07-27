@@ -1,9 +1,13 @@
 # Node modules
 node_modules/
-package-lock.json
+
+# Local environment secrets
+.env
+backend/.env
 
 # Next.js build output
 .next/
+.next-*/
 out/
 
 # Production build
@@ -24,6 +28,9 @@ Thumbs.db
 
 # Optional: if using TypeScript
 *.tsbuildinfo
+
+# Local database files
+backend/*.db
 
 # Optional: if using testing tools
 coverage/

@@ -101,6 +101,14 @@ class OrderCreate(BaseModel):
             raise ValueError("Order must contain at least one item")
         return v
 
+    @field_validator("first_name", "last_name", "address", "city", "state", "zip_code")
+    @classmethod
+    def required_text(cls, v: str) -> str:
+        value = v.strip()
+        if not value:
+            raise ValueError("This field is required")
+        return value
+
 
 class OrderItemOut(BaseModel):
     id:         int

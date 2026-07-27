@@ -12,7 +12,9 @@ Admin only:
 """
 
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
@@ -20,9 +22,29 @@ from models import Order, OrderItem, OrderStatus, Product, User
 from schemas import (
     MessageResponse, OrderCreate, OrderOut, OrderStatusUpdate,
 )
-from routes.auth import get_current_user, require_admin
+from routes.auth import get_current_user, require_admin, ALGORITHM, SECRET_KEY
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
+
+optional_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/auth/login/form", auto_error=False)
+
+
+def get_optional_user(
+    token: Optional[str] = Depends(optional_oauth2),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Resolve a customer token when present while preserving guest checkout."""
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        if not isinstance(user_id, str) or not user_id.isdigit():
+            return None
+        user = db.get(User, int(user_id))
+        return user if user and user.is_active else None
+    except (JWTError, ValueError):
+        return None
 
 FREE_SHIPPING_THRESHOLD = 499.0
 SHIPPING_COST           = 40.0
@@ -33,6 +55,7 @@ SHIPPING_COST           = 40.0
 def place_order(
     payload: OrderCreate,
     db:      Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
     """
     Creates a new order. Validates stock for every item, deducts
@@ -41,18 +64,27 @@ def place_order(
     subtotal = 0.0
     item_rows: list[OrderItem] = []
 
+    quantities: dict[int, int] = {}
     for item in payload.items:
-        product = db.get(Product, item.product_id)
+        quantities[item.product_id] = quantities.get(item.product_id, 0) + item.quantity
+
+    products: dict[int, Product] = {}
+    for product_id, quantity in quantities.items():
+        product = db.get(Product, product_id)
         if not product or not product.is_active:
             raise HTTPException(
                 status_code=404,
                 detail=f"Product {item.product_id} not found",
             )
-        if product.stock < item.quantity:
+        if product.stock < quantity:
             raise HTTPException(
                 status_code=409,
                 detail=f"'{product.name}' only has {product.stock} left in stock",
             )
+        products[product_id] = product
+
+    for item in payload.items:
+        product = products[item.product_id]
         subtotal += product.price * item.quantity
         item_rows.append(
             OrderItem(
@@ -81,6 +113,7 @@ def place_order(
         total=total,
         notes=payload.notes,
         status=OrderStatus.pending,
+        user_id=current_user.id if current_user else None,
     )
     db.add(order)
     db.flush()  # get order.id before adding items
@@ -89,7 +122,7 @@ def place_order(
         row.order_id = order.id
         db.add(row)
         # Deduct stock
-        product = db.get(Product, row.product_id)
+        product = products[row.product_id]
         product.stock = max(0, product.stock - row.quantity)
 
     db.commit()
@@ -118,6 +151,7 @@ def my_orders(current_user: User = Depends(get_current_user), db: Session = Depe
 def get_order(
     order_id: int,
     db:       Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     order = (
         db.query(Order)
@@ -126,6 +160,8 @@ def get_order(
         .first()
     )
     if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    if current_user.role.value != "admin" and order.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
 

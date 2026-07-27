@@ -24,7 +24,10 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 # ── Security config ────────────────────────────────────────────
 SECRET_KEY  = os.getenv("SECRET_KEY", "madhav-fashion-change-in-production")
 ALGORITHM   = "HS256"
-TOKEN_EXPIRE_HOURS = 24
+TOKEN_EXPIRE_HOURS = int(os.getenv("TOKEN_EXPIRE_HOURS", "1"))
+
+if os.getenv("APP_ENV", "development").lower() in {"production", "prod"} and SECRET_KEY == "madhav-fashion-change-in-production":
+    raise RuntimeError("SECRET_KEY must be configured in production")
 
 pwd_ctx    = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login/form")
@@ -55,8 +58,8 @@ def get_current_user(
     )
     try:
         payload  = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_id = payload.get("sub")
+        if not isinstance(user_id, str) or not user_id.isdigit():
             raise creds_exc
     except JWTError:
         raise creds_exc
@@ -70,6 +73,12 @@ def get_current_user(
 def require_admin(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role != UserRole.admin:
         raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
+
+def require_admin_or_seller(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role not in (UserRole.admin, UserRole.seller):
+        raise HTTPException(status_code=403, detail="Seller or admin access required")
     return current_user
 
 
@@ -109,7 +118,7 @@ def register_admin(payload: AdminRegister, db: Session = Depends(get_db)):
         name=payload.name,
         email=payload.email,
         hashed_password=hash_password(payload.password),
-        role=UserRole.admin,
+        role=UserRole.seller,
     )
     db.add(user)
     db.commit()
@@ -144,6 +153,8 @@ def login_form(
     user = db.query(User).filter(User.email == form.username).first()
     if not user or not verify_password(form.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Account is disabled")
     return Token(
         access_token=create_access_token(user.id),
         user=UserOut.model_validate(user),

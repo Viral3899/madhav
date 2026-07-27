@@ -1,6 +1,7 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
+import Link from 'next/link';
 import AppIcon from './AppIcon';
 import AppImage from './AppImage';
 
@@ -10,6 +11,7 @@ interface AppLogoProps {
   size?: number;
   className?: string;
   onClick?: () => void;
+  href?: string;
 }
 
 const AppLogo = memo(function AppLogo({
@@ -18,6 +20,7 @@ const AppLogo = memo(function AppLogo({
   size = 64,
   className = '',
   onClick,
+  href,
 }: AppLogoProps) {
   const containerClassName = useMemo(() => {
     const classes = ['flex items-center'];
@@ -26,7 +29,7 @@ const AppLogo = memo(function AppLogo({
     return classes.join(' ');
   }, [onClick, className]);
 
-  return (
+  const logo = (
     <div className={containerClassName} onClick={onClick}>
       {src ? (
         <AppImage
@@ -42,6 +45,14 @@ const AppLogo = memo(function AppLogo({
         <AppIcon name={iconName} size={size} className="flex-shrink-0" />
       )}
     </div>
+  );
+
+  return href ? (
+    <Link href={href} aria-label="Go to Madhav Fashion Studio home">
+      {logo}
+    </Link>
+  ) : (
+    logo
   );
 });
 

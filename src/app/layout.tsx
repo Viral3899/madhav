@@ -33,12 +33,11 @@ export const metadata: Metadata = {
   description:
     'Shop fashion, home essentials, gifts and more at Madhav Fashion Studio. Great finds, honest prices, delivered to your door.',
   icons: {
-    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
+    icon: [{ url: '/madhav-favicon.svg', type: 'image/svg+xml' }],
   },
   openGraph: {
     title: 'Madhav Fashion Studio | Everyday shopping, made easy',
     description: 'Great finds, honest prices, delivered to your door.',
-    images: [{ url: '/assets/images/app_logo.png', width: 1200, height: 630 }],
   },
 };
 

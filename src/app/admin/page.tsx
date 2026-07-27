@@ -110,22 +110,25 @@ export default function AdminPage() {
                 className="w-full checkout-input"
               />
             )}
-            <input
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Fashion item name"
-              className="w-full checkout-input"
-            />
-            <input
-              required
-              type="number"
-              min="0"
-              value={form.price}
-              onChange={(e) => setForm({ ...form, price: e.target.value })}
-              placeholder="Price (₹)"
-              className="w-full checkout-input"
-            />
+            <label className="price-field">
+              <span>₹</span>
+              <input
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Fashion item name"
+                className="w-full checkout-input"
+              />
+              <input
+                required
+                type="number"
+                min="0"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                placeholder="Price"
+                className="w-full checkout-input"
+              />
+            </label>
             <input
               required
               type="number"

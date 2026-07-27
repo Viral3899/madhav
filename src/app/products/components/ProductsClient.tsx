@@ -7,8 +7,9 @@ import { useCart } from '@/context/CartContext';
 import { apiFetch, type ApiProduct } from '@/lib/api';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useSearchParams } from 'next/navigation';
 
-type Department = 'all' | 'women' | 'men' | 'kids';
+type Department = 'all' | 'women' | 'men' | 'kids' | 'footwear' | 'accessories';
 
 function ProductCard({ product }: { product: ApiProduct }) {
   const { addItem } = useCart();
@@ -99,6 +100,7 @@ function ProductCard({ product }: { product: ApiProduct }) {
 }
 
 export default function ProductsClient() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<ApiProduct[]>([]);
   const [department, setDepartment] = useState<Department>('all');
   const [sortBy, setSortBy] = useState('featured');
@@ -108,6 +110,18 @@ export default function ProductsClient() {
   const [color, setColor] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setQuery(searchParams.get('q') || '');
+    const requestedDepartment = searchParams.get('department');
+    if (
+      ['all', 'women', 'men', 'kids', 'footwear', 'accessories'].includes(requestedDepartment || '')
+    ) {
+      setDepartment(requestedDepartment as Department);
+    } else {
+      setDepartment('all');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     setLoading(true);
@@ -134,8 +148,14 @@ export default function ProductsClient() {
         const gender = (
           product.specs?.Gender || (product.name.toLowerCase().includes('girls') ? 'Kids' : '')
         ).toLowerCase();
+        const productName = product.name.toLowerCase();
+        const departmentMatches =
+          department === 'all' ||
+          gender === department ||
+          (department === 'footwear' && /shoe|sneaker|footwear/.test(productName)) ||
+          (department === 'accessories' && /bag|tote|accessor/.test(productName));
         return (
-          (department === 'all' || gender === department) &&
+          departmentMatches &&
           product.price <= maxPrice &&
           (size === 'all' || product.sizes.includes(size)) &&
           (color === 'all' || product.colors.includes(color))
@@ -183,16 +203,18 @@ export default function ProductsClient() {
           </div>
           <fieldset>
             <legend>Department</legend>
-            {(['all', 'women', 'men', 'kids'] as Department[]).map((item) => (
-              <label key={item}>
-                <input
-                  type="radio"
-                  checked={department === item}
-                  onChange={() => setDepartment(item)}
-                />{' '}
-                {item === 'all' ? 'All fashion' : item[0].toUpperCase() + item.slice(1)}
-              </label>
-            ))}
+            {(['all', 'women', 'men', 'kids', 'footwear', 'accessories'] as Department[]).map(
+              (item) => (
+                <label key={item}>
+                  <input
+                    type="radio"
+                    checked={department === item}
+                    onChange={() => setDepartment(item)}
+                  />{' '}
+                  {item === 'all' ? 'All fashion' : item[0].toUpperCase() + item.slice(1)}
+                </label>
+              )
+            )}
           </fieldset>
           <fieldset>
             <legend>Price</legend>

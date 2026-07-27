@@ -25,7 +25,7 @@ from schemas import (
     MessageResponse, ProductCreate, ProductOut, ProductUpdate,
     ReviewCreate, ReviewOut,
 )
-from routes.auth import get_current_user, require_admin
+from routes.auth import get_current_user, require_admin, require_admin_or_seller
 from search_service import search_ids
 
 router = APIRouter(prefix="/api/products", tags=["products"])
@@ -92,8 +92,8 @@ def list_products(
         qs = qs.order_by(
             (Product.original_price - Product.price).desc().nullslast()
         )
-    else:  # featured — newest first
-        qs = qs.order_by(Product.id.asc())
+    else:  # featured — popular products across the full fashion catalogue
+        qs = qs.order_by(Product.rating.desc(), Product.review_count.desc(), Product.id.asc())
 
     offset = (page - 1) * limit
     return qs.offset(offset).limit(limit).all()
@@ -144,7 +144,7 @@ def submit_review(
 def create_product(
     payload: ProductCreate,
     db:      Session = Depends(get_db),
-    _admin           = Depends(require_admin),
+    _admin_or_seller = Depends(require_admin_or_seller),
 ):
     if payload.category.lower() != "fashion":
         raise HTTPException(status_code=422, detail="Only fashion products are supported")

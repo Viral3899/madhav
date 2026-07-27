@@ -1,4 +1,5 @@
 import React from 'react';
+import { Suspense } from 'react';
 import { CartProvider } from '@/context/CartContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -15,7 +16,9 @@ export default function ProductsPage() {
     <CartProvider>
       <Header />
       <main className="pt-8">
-        <ProductsClient />
+        <Suspense fallback={<div className="market-section">Loading products...</div>}>
+          <ProductsClient />
+        </Suspense>
       </main>
       <Footer />
     </CartProvider>

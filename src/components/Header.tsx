@@ -7,18 +7,21 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import CartDrawer from '@/components/CartDrawer';
 import AuthModal from '@/components/AuthModal';
-import { countryOptions, useCurrency } from '@/context/CurrencyContext';
 
 export default function Header() {
   const { totalItems, openCart } = useCart();
-  const { user, logout } = useAuth();
-  const { country, setCountry } = useCurrency();
+  const { user } = useAuth();
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const [department, setDepartment] = useState('all');
   const [menuOpen, setMenuOpen] = useState(false);
   function submit(event: React.FormEvent) {
     event.preventDefault();
-    router.push(`/products${query ? `?q=${encodeURIComponent(query)}` : ''}`);
+    const params = new URLSearchParams();
+    if (query.trim()) params.set('q', query.trim());
+    if (department !== 'all') params.set('department', department);
+    const search = params.toString();
+    router.push(`/products${search ? `?${search}` : ''}`);
   }
   return (
     <>
@@ -37,29 +40,17 @@ export default function Header() {
               Madhav Fashion Studio<small>.in</small>
             </span>
           </Link>
-          <div className="deliver">
-            <Icon name="MapPinIcon" size={19} />
-            <span>
-              Deliver to
-              <select
-                aria-label="Delivery country"
-                className="country-select"
-                value={country}
-                onChange={(event) => setCountry(event.target.value as typeof country)}
-              >
-                {countryOptions.map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </span>
-          </div>
           <form className="market-search" onSubmit={submit}>
-            <select aria-label="Search fashion department">
-              <option>All fashion</option>
-              <option>Women</option>
-              <option>Men</option>
-              <option>Kids</option>
-              <option>Footwear</option>
+            <select
+              aria-label="Search fashion department"
+              value={department}
+              onChange={(event) => setDepartment(event.target.value)}
+            >
+              <option value="all">All fashion</option>
+              <option value="women">Women</option>
+              <option value="men">Men</option>
+              <option value="kids">Kids</option>
+              <option value="footwear">Footwear</option>
             </select>
             <input
               value={query}
@@ -89,11 +80,6 @@ export default function Header() {
             >
               <Icon name="Cog6ToothIcon" size={19} variant="outline" />
             </Link>
-            {user && (
-              <button className="logout-link" onClick={logout}>
-                Sign out
-              </button>
-            )}
             <Link href={user ? '/orders' : '/customer-login?tab=login'} className="orders-action">
               <small>Returns</small>
               <b>& Orders</b>
@@ -111,15 +97,15 @@ export default function Header() {
         </div>
         <nav className="market-nav">
           <div className="nav-inner">
-            <button onClick={() => setMenuOpen(!menuOpen)}>
-              <Icon name="Bars3Icon" size={19} /> All fashion
-            </button>
+            <Link href="/products" className="nav-all-fashion">
+              All fashion
+            </Link>
             <Link href="/products">Today&apos;s Deals</Link>
-            <Link href="/products">Women</Link>
-            <Link href="/products">Men</Link>
-            <Link href="/products">Kids</Link>
-            <Link href="/products">Footwear</Link>
-            <Link href="/products">Accessories</Link>
+            <Link href="/products?department=women">Women</Link>
+            <Link href="/products?department=men">Men</Link>
+            <Link href="/products?department=kids">Kids</Link>
+            <Link href="/products?department=footwear">Footwear</Link>
+            <Link href="/products?department=accessories">Accessories</Link>
             <span className="nav-spacer" />
             <span>
               Madhav Plus <Icon name="ChevronDownIcon" size={14} />
@@ -131,9 +117,9 @@ export default function Header() {
         <div className="mobile-nav">
           <Link href="/products">Today&apos;s Deals</Link>
           <Link href="/products">All fashion</Link>
-          <Link href="/products">Women</Link>
-          <Link href="/products">Men</Link>
-          <Link href="/products">Kids</Link>
+          <Link href="/products?department=women">Women</Link>
+          <Link href="/products?department=men">Men</Link>
+          <Link href="/products?department=kids">Kids</Link>
           <Link href="/account/settings">Your account</Link>
           <Link href="/orders">Your orders</Link>
         </div>

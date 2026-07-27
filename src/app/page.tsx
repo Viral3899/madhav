@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CartProvider, useCart } from '@/context/CartContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Icon from '@/components/ui/AppIcon';
-import { getFeaturedProducts } from '@/data/products';
+import { apiFetch, type ApiProduct } from '@/lib/api';
 import { useCurrency } from '@/context/CurrencyContext';
 import RecommendationsRail from '@/app/components/RecommendationsRail';
 
@@ -36,7 +36,15 @@ const categories = [
 function ProductRail() {
   const { addItem } = useCart();
   const { formatCurrency } = useCurrency();
-  const products = getFeaturedProducts();
+  const [products, setProducts] = useState<ApiProduct[]>([]);
+
+  useEffect(() => {
+    apiFetch<ApiProduct[]>('/products?limit=100&category=fashion&sort=rating')
+      .then((items) =>
+        setProducts(items.slice(0, 12).map((item) => ({ ...item, reviewCount: item.review_count })))
+      )
+      .catch(() => setProducts([]));
+  }, []);
   return (
     <section className="market-section">
       <div className="section-heading">
@@ -49,39 +57,42 @@ function ProductRail() {
         </Link>
       </div>
       <div className="product-rail">
-        {products.map((product) => (
-          <article className="market-product" key={product.id}>
-            <Link href="/products" className="market-product-image">
-              <img src={product.image} alt={product.name} loading="lazy" />
-              {product.badge && <span>{product.badge}</span>}
-            </Link>
-            <div className="market-rating">
-              <span>★</span> {product.rating} <small>({product.reviewCount})</small>
-            </div>
-            <h3>{product.name}</h3>
-            <p className="market-price">
-              {formatCurrency(product.price)}{' '}
-              <del>{product.originalPrice ? formatCurrency(product.originalPrice) : ''}</del>
-            </p>
-            <button
-              className="mini-add"
-              onClick={() =>
-                addItem({
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  originalPrice: product.originalPrice,
-                  image: product.image,
-                  size: product.sizes[0],
-                  color: product.colors[0],
-                  category: product.category,
-                })
-              }
-            >
-              Add to cart
-            </button>
-          </article>
-        ))}
+        {products.map((product) => {
+          const image = product.images[0] || '/assets/images/no_image.png';
+          return (
+            <article className="market-product" key={product.id}>
+              <Link href={`/products/${product.id}`} className="market-product-image">
+                <img src={image} alt={product.name} loading="lazy" />
+                {product.badge && <span>{product.badge}</span>}
+              </Link>
+              <div className="market-rating">
+                <span>★</span> {product.rating} <small>({product.reviewCount})</small>
+              </div>
+              <h3>{product.name}</h3>
+              <p className="market-price">
+                {formatCurrency(product.price)}{' '}
+                <del>{product.original_price ? formatCurrency(product.original_price) : ''}</del>
+              </p>
+              <button
+                className="mini-add"
+                onClick={() =>
+                  addItem({
+                    id: String(product.id),
+                    name: product.name,
+                    price: product.price,
+                    originalPrice: product.original_price || undefined,
+                    image,
+                    size: product.sizes[0] || 'One Size',
+                    color: product.colors[0] || 'Default',
+                    category: product.category,
+                  })
+                }
+              >
+                Add to cart
+              </button>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

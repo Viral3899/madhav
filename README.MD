@@ -25,6 +25,78 @@ The current implementation is a modular monolith designed to be split into the l
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full module-by-module production architecture, data models, API boundaries, scaling decisions, failure handling, and delivery order.
 
+## Roadmap to Production
+
+This project is a functional ecommerce MVP. Use the following order to develop it toward a large-scale marketplace:
+
+### 1. Production Foundation
+
+- [ ] Move the database from SQLite to PostgreSQL.
+- [ ] Add Alembic database migrations.
+- [ ] Add automated backend, frontend, and end-to-end tests.
+- [ ] Replace development secrets and demo credentials before deployment.
+- [ ] Add rate limiting, secure cookies, CSRF protection, strict CORS, and security headers.
+- [ ] Configure backups, restore testing, structured logs, metrics, and error alerts.
+
+### 2. Real Payments and Orders
+
+- [ ] Integrate Razorpay, Stripe, or another PCI-compliant payment provider.
+- [ ] Add signed, idempotent payment webhooks.
+- [ ] Add payment failure, refund, cancellation, and retry handling.
+- [ ] Add saved customer addresses and delivery options.
+- [ ] Add coupons, taxes, invoices, and return workflows.
+
+### 3. Marketplace and Seller Operations
+
+- [ ] Add strict seller ownership using `seller_id` on products, orders, and reports.
+- [ ] Add seller verification, KYC, commission, and payout workflows.
+- [ ] Add product approval and catalogue moderation.
+- [ ] Add bulk product import with row-level validation errors.
+- [ ] Add multiple seller offers and Buy Box selection.
+
+### 4. Catalogue, Search, and Media
+
+- [ ] Add proper brands, categories, attributes, variants, and SKU management.
+- [ ] Use OpenSearch for full-text search, autocomplete, filters, and ranking.
+- [ ] Store product media in object storage such as S3 with CDN delivery.
+- [ ] Add image resizing, WebP/AVIF conversion, and upload scanning.
+- [ ] Add verified-purchase reviews, review moderation, questions, and answers.
+
+### 5. Inventory, Shipping, and Delivery
+
+- [ ] Add warehouses, stock reservations, and reservation expiry.
+- [ ] Add split shipments and fulfilment groups for multi-seller orders.
+- [ ] Integrate a carrier or aggregator such as Shiprocket, Delhivery, FedEx, or DHL.
+- [ ] Add shipment tracking and signed carrier webhooks.
+- [ ] Add delivery estimates, return pickup, and proof of delivery.
+
+### 6. Scale and Customer Experience
+
+- [ ] Add Redis for carts, sessions, caching, and rate limits.
+- [ ] Add background workers and an outbox/event system for order processing.
+- [ ] Add email, SMS, WhatsApp, and push notifications.
+- [ ] Add analytics, recommendations, fraud detection, and customer support tools.
+- [ ] Load-test critical flows such as search, cart, checkout, and order creation.
+
+### 7. Deployment and Launch
+
+- [ ] Deploy the Next.js frontend and FastAPI backend separately.
+- [ ] Use managed PostgreSQL, Redis, object storage, and search infrastructure.
+- [ ] Configure a production domain, HTTPS, environment variables, and CI/CD.
+- [ ] Add health checks, monitoring dashboards, alerting, and incident procedures.
+- [ ] Run a security review, backup restore test, and production readiness review.
+
+### Recommended Delivery Order
+
+1. PostgreSQL, migrations, secrets, security controls, and tests.
+2. Real payments, webhooks, refunds, and order state management.
+3. Seller ownership, verification, commissions, and payouts.
+4. Returns, shipping integration, tracking, and notifications.
+5. Redis, CDN media, OpenSearch, and background workers.
+6. Analytics, recommendations, fraud detection, and load testing.
+
+Do not use Amazon branding, logos, copied content, or claim to be Amazon. Build these capabilities under the Madhav Fashion Studio brand.
+
 ## Run Locally
 
 ### 1. Frontend
@@ -76,7 +148,7 @@ The storefront supports `INR` (default), `USD`, `EUR`, `GBP`, and `AED`. Use the
 
 Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `SECRET_KEY` before production use.
 
-Customer accounts and shop-holder accounts use separate flows. Customers use the normal Sign In/Register controls. Shop holders use `http://localhost:4028/login.html?tab=admin-register`, then sign in at `http://localhost:4028/login.html?tab=admin`. Set `ADMIN_SIGNUP_KEY` in the backend environment; the registration screen uses `madhav-shop-holder-setup` by default for local development, which must be replaced before deployment.
+Customer accounts and shop-holder accounts use separate flows. Customers use `/customer-login`. Shop holders use `/shop-holder`, then manage products from `/seller`. Set `ADMIN_SIGNUP_KEY` in the backend environment; the registration screen uses `madhav-shop-holder-setup` by default for local development, which must be replaced before deployment.
 
 ## Configuration
 

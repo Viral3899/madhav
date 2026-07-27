@@ -752,6 +752,8 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  min-width: 0;
+  overflow: hidden;
 }
 .market-logo {
   display: inline-flex;
@@ -763,6 +765,8 @@
   font-weight: 800;
   letter-spacing: -1px;
   white-space: nowrap;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 .market-logo small {
   color: #ff9900;
@@ -822,6 +826,7 @@
 .market-search {
   display: flex;
   flex: 1;
+  min-width: 140px;
   height: 42px;
   max-width: 760px;
   overflow: hidden;
@@ -835,7 +840,9 @@
   color: #172133;
 }
 .market-search select {
-  width: 58px;
+  width: 105px;
+  min-width: 105px;
+  flex: 0 0 105px;
   padding: 0 8px;
   background: #f3f3f3;
   border-right: 1px solid #d5d9d9;
@@ -849,6 +856,8 @@
 }
 .market-search button {
   width: 48px;
+  min-width: 48px;
+  flex: 0 0 48px;
   border: 0;
   background: #ff9900;
   color: #172133;
@@ -857,6 +866,9 @@
 .header-actions {
   gap: 18px;
   margin-left: auto;
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
 }
 .currency-select {
   max-width: 92px;
@@ -910,16 +922,6 @@
   color: #ff9900;
   font-size: 15px;
 }
-.logout-link {
-  position: absolute;
-  top: 64px;
-  right: 160px;
-  border: 0;
-  background: #fff;
-  color: #172133;
-  padding: 4px 8px;
-  font-size: 11px;
-}
 .market-nav {
   background: #243447;
 }
@@ -934,7 +936,7 @@
   font-size: 13px;
   font-weight: 600;
 }
-.nav-inner button,
+.nav-inner a.nav-all-fashion,
 .nav-inner span {
   display: inline-flex;
   align-items: center;
@@ -951,6 +953,23 @@
 .mobile-menu,
 .mobile-nav {
   display: none;
+}
+
+@media (max-width: 1200px) {
+  .header-top {
+    gap: 12px;
+    padding-inline: 14px;
+  }
+
+  .deliver,
+  .settings-link,
+  .orders-action {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
 }
 .market-hero {
   max-width: 1500px;
@@ -1896,6 +1915,10 @@
   font-weight: 800;
   cursor: pointer;
 }
+.seller-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
 .seller-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1921,6 +1944,47 @@
   padding: 25px;
   background: #fff;
   border: 1px solid #d5d9d9;
+}
+.seller-product-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  margin-bottom: 25px;
+}
+.seller-product-form h2 {
+  grid-column: 1 / -1;
+  margin-bottom: 2px;
+}
+.seller-product-form input,
+.seller-product-form .seller-price-field {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 0;
+}
+.seller-price-field select {
+  border: 0;
+  background: transparent;
+  color: #59636e;
+  font-weight: 700;
+}
+.seller-product-form button {
+  justify-self: start;
+}
+.seller-product-form .seller-cancel {
+  padding: 10px 16px;
+  border: 1px solid #aeb4b7;
+  background: #fff;
+  color: #172133;
+  border-radius: 4px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .seller-product-form {
+    grid-template-columns: 1fr;
+  }
+  .seller-product-form h2 {
+    grid-column: auto;
+  }
 }
 .seller-panel-heading {
   display: flex;
@@ -2036,6 +2100,7 @@
   .header-top {
     min-height: 60px;
     flex-wrap: wrap;
+    width: 100%;
   }
   .mobile-menu {
     display: block;
@@ -2061,6 +2126,8 @@
   }
   .market-search {
     order: 3;
+    width: 100%;
+    flex: 0 0 100%;
     flex-basis: 100%;
     max-width: none;
     height: 38px;

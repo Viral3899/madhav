@@ -12,7 +12,6 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from database import Base, SessionLocal, engine
 from models import Product, User, UserRole
@@ -21,7 +20,7 @@ from routes import auth, products, orders, admin, recommendations, search
 
 
 # ════════════════════════════════════════════════════════════════
-#   SEED DATA — mirrors the products in store.html
+#   SEED DATA — mirrors the storefront catalogue
 # ════════════════════════════════════════════════════════════════
 SEED_PRODUCTS = [
     # ── Electronics ──────────────────────────────────────────
@@ -231,74 +230,110 @@ FASHION_CATALOG = [
          description="Soft printed cotton Anarkali kurti for festive days and everyday Indian style.",
          price=899, original_price=1299, stock=60, badge="Indian Edit",
          colors=["Pink", "Yellow", "Sky Blue"], sizes=["4Y", "6Y", "8Y", "10Y", "12Y"],
-         images=["https://picsum.photos/seed/girls-anarkali/600/600"],
+         images=["https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Cotton", "Style": "Indian ethnic wear", "Fit": "Comfort fit"}, rating=4.8, review_count=124),
     dict(sku="f2", category="fashion", name="Girls Printed Cotton T-Shirt",
          description="Breathable cotton T-shirt with a bright Indian-inspired print for everyday wear.",
          price=499, original_price=699, stock=90, badge="Everyday Favourite",
          colors=["Peach", "Mint", "Lavender"], sizes=["4Y", "6Y", "8Y", "10Y", "12Y"],
-         images=["https://picsum.photos/seed/girls-tshirt/600/600"],
+         images=["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "100% Cotton", "Sleeve": "Short sleeve", "Care": "Machine wash"}, rating=4.7, review_count=98),
     dict(sku="f3", category="fashion", name="Girls Slim Fit Denim Jeans",
          description="Stretch denim jeans designed for comfortable movement, play, and everyday outfits.",
          price=799, original_price=1199, stock=75, badge="New",
          colors=["Indigo", "Black", "Light Blue"], sizes=["4Y", "6Y", "8Y", "10Y", "12Y"],
-         images=["https://picsum.photos/seed/girls-jeans/600/600"],
+         images=["https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Stretch denim", "Fit": "Slim fit", "Closure": "Button and zip"}, rating=4.6, review_count=86),
     dict(sku="f4", category="fashion", name="Girls Embroidered Kurti Set",
          description="Colourful Indian kurti set with delicate embroidery and matching palazzo pants.",
          price=1199, original_price=1799, stock=45, badge="Festive Pick",
          colors=["Red", "Turquoise", "Mustard"], sizes=["4Y", "6Y", "8Y", "10Y", "12Y"],
-         images=["https://picsum.photos/seed/girls-kurti-set/600/600"],
+         images=["https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Rayon", "Includes": "Kurti and palazzo", "Style": "Festive Indian wear"}, rating=4.9, review_count=73),
     dict(sku="f5", category="fashion", name="Women’s Everyday Co-ord Set",
          description="Relaxed cotton co-ord set with a clean silhouette for travel, errands, and easy weekends.",
          price=1099, original_price=1599, stock=55, badge="Bestseller",
          colors=["Olive", "Black", "Beige"], sizes=["S", "M", "L", "XL", "XXL"],
-         images=["https://picsum.photos/seed/womens-coord/600/600"],
+         images=["https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Cotton", "Gender": "Women", "Occasion": "Casual", "Fit": "Relaxed"}, rating=4.7, review_count=441),
     dict(sku="f6", category="fashion", name="Women’s Floral Midi Dress",
          description="Lightweight floral midi dress with a comfortable waist and soft everyday drape.",
          price=899, original_price=1399, stock=38, badge="New arrival",
          colors=["Blue", "Pink", "Green"], sizes=["S", "M", "L", "XL"],
-         images=["https://picsum.photos/seed/floral-midi/600/600"],
+         images=["https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Rayon", "Gender": "Women", "Occasion": "Casual", "Sleeve": "Short sleeve"}, rating=4.6, review_count=192),
     dict(sku="f7", category="fashion", name="Men’s Slim Fit Oxford Shirt",
          description="Crisp cotton Oxford shirt with a versatile fit for workdays and evenings out.",
          price=799, original_price=1199, stock=72, badge="Top rated",
          colors=["White", "Sky Blue", "Navy"], sizes=["S", "M", "L", "XL", "XXL"],
-         images=["https://picsum.photos/seed/oxford-shirt/600/600"],
+         images=["https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Cotton", "Gender": "Men", "Occasion": "Workwear", "Fit": "Slim fit"}, rating=4.8, review_count=357),
     dict(sku="f8", category="fashion", name="Men’s Tapered Stretch Jeans",
          description="Comfort stretch denim with a modern tapered leg and five-pocket construction.",
          price=999, original_price=1699, stock=61, badge="Deal of the day",
          colors=["Dark Blue", "Black", "Mid Blue"], sizes=["28", "30", "32", "34", "36"],
-         images=["https://picsum.photos/seed/tapered-jeans/600/600"],
+         images=["https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Stretch denim", "Gender": "Men", "Fit": "Tapered", "Rise": "Mid rise"}, rating=4.5, review_count=284),
     dict(sku="f9", category="fashion", name="Men’s Lightweight Hooded Jacket",
          description="Layer-ready lightweight jacket with a hood and secure zip pockets for changing weather.",
          price=1299, original_price=2199, stock=29, badge="Winter edit",
          colors=["Black", "Olive", "Charcoal"], sizes=["M", "L", "XL", "XXL"],
-         images=["https://picsum.photos/seed/hooded-jacket/600/600"],
+         images=["https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Polyester", "Gender": "Men", "Occasion": "Outdoor", "Water resistant": "Yes"}, rating=4.4, review_count=117),
     dict(sku="f10", category="fashion", name="Classic Kanjivaram Saree",
          description="Festive saree-inspired edit with a rich border and an elegant drape for celebrations.",
          price=1899, original_price=2999, stock=18, badge="Festive favourite",
          colors=["Maroon", "Royal Blue", "Green"], sizes=["Free Size"],
-         images=["https://picsum.photos/seed/kanjivaram-saree/600/600"],
+         images=["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85"],
          specs={"Fabric": "Silk blend", "Gender": "Women", "Occasion": "Festive", "Includes": "Unstitched saree"}, rating=4.9, review_count=88),
     dict(sku="f11", category="fashion", name="Women’s Everyday Running Shoes",
          description="Cushioned everyday sneakers with a breathable upper for walks, commutes, and casual looks.",
          price=1199, original_price=1899, stock=44, badge="Comfort pick",
          colors=["White", "Black", "Pink"], sizes=["36", "37", "38", "39", "40"],
-         images=["https://picsum.photos/seed/running-shoes/600/600"],
+         images=["https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=85"],
          specs={"Material": "Mesh", "Gender": "Women", "Occasion": "Athleisure", "Sole": "EVA"}, rating=4.6, review_count=246),
     dict(sku="f12", category="fashion", name="Structured Vegan Leather Tote Bag",
          description="Roomy structured tote with an inner pocket and polished everyday styling.",
          price=899, original_price=1499, stock=33, badge="Editor's pick",
          colors=["Tan", "Black", "Burgundy"], sizes=["One Size"],
-         images=["https://picsum.photos/seed/tote-bag/600/600"],
+         images=["https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=85"],
          specs={"Material": "Vegan leather", "Gender": "Women", "Occasion": "Everyday", "Capacity": "Large"}, rating=4.7, review_count=163),
+    dict(sku="f13", category="fashion", name="Women’s Cotton Everyday Kurta",
+         description="Breathable straight-fit cotton kurta with a subtle block print for daily wear.",
+         price=699, original_price=999, stock=58, badge="Everyday pick",
+         colors=["Indigo", "Mustard", "Sage"], sizes=["S", "M", "L", "XL", "XXL"],
+         images=["https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=800&q=85"],
+         specs={"Fabric": "Cotton", "Gender": "Women", "Occasion": "Everyday", "Fit": "Regular"}, rating=4.6, review_count=74),
+    dict(sku="f14", category="fashion", name="Men’s Casual Linen Shirt",
+         description="Lightweight linen-blend shirt with a relaxed fit for warm days and weekends.",
+         price=899, original_price=1299, stock=46, badge="New",
+         colors=["White", "Blue", "Olive"], sizes=["S", "M", "L", "XL", "XXL"],
+         images=["https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?auto=format&fit=crop&w=800&q=85"],
+         specs={"Fabric": "Linen blend", "Gender": "Men", "Occasion": "Casual", "Fit": "Relaxed"}, rating=4.5, review_count=61),
+    dict(sku="f15", category="fashion", name="Girls Printed Summer Frock",
+         description="Soft cotton frock with a colourful print and easy movement for summer days.",
+         price=649, original_price=899, stock=42, badge="Kids favourite",
+         colors=["Pink", "Yellow", "Mint"], sizes=["4Y", "6Y", "8Y", "10Y", "12Y"],
+         images=["https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=800&q=85"],
+         specs={"Fabric": "Cotton", "Gender": "Kids", "Occasion": "Casual", "Fit": "Comfort"}, rating=4.7, review_count=52),
+    dict(sku="f16", category="fashion", name="Women’s Everyday Ballet Flats",
+         description="Cushioned slip-on ballet flats with a flexible sole for commuting and everyday looks.",
+         price=799, original_price=1199, stock=37, badge="Comfort pick",
+         colors=["Black", "Tan", "Red"], sizes=["36", "37", "38", "39", "40"],
+         images=["https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85"],
+         specs={"Material": "Synthetic leather", "Gender": "Women", "Occasion": "Everyday", "Sole": "Rubber"}, rating=4.5, review_count=83),
+    dict(sku="f17", category="fashion", name="Men’s Cotton Polo T-Shirt",
+         description="Classic pique cotton polo with a clean collar and comfortable regular fit.",
+         price=599, original_price=899, stock=68, badge="Best value",
+         colors=["Navy", "White", "Maroon"], sizes=["S", "M", "L", "XL", "XXL"],
+         images=["https://images.unsplash.com/photo-1625910513413-5fc45b7f1d2f?auto=format&fit=crop&w=800&q=85"],
+         specs={"Fabric": "Pique cotton", "Gender": "Men", "Occasion": "Casual", "Fit": "Regular"}, rating=4.4, review_count=47),
+    dict(sku="f18", category="fashion", name="Embroidered Sling Bag",
+         description="Compact sling bag with embroidered detailing, adjustable strap, and zip closure.",
+         price=749, original_price=1099, stock=31, badge="Editor’s pick",
+         colors=["Black", "Tan", "Red"], sizes=["One Size"],
+         images=["https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=85"],
+         specs={"Material": "Vegan leather", "Gender": "Women", "Occasion": "Everyday", "Capacity": "Small"}, rating=4.6, review_count=39),
 ]
 
 
@@ -346,7 +381,7 @@ async def lifespan(app: FastAPI):
             ))
             print(f"Demo seller created - email: {seller_email} password: {seller_pass}")
 
-        # Keep the live shop focused on girls' Indian clothing, T-shirts, and jeans.
+        # Keep the live shop focused on the complete fashion catalogue.
         allowed_skus = {item["sku"] for item in FASHION_CATALOG}
         for product in db.query(Product).all():
             if product.sku not in allowed_skus:
@@ -389,16 +424,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ── CORS — allow store.html and admin.html (opened as file://) ──
+# ── CORS ──
 ALLOWED_ORIGINS = [
     "http://localhost:3000",    # Next.js default
     "http://localhost:4028",    # Madhav storefront
     "http://127.0.0.1:4028",
     "http://localhost:8000",    # self
     "http://127.0.0.1:8000",
-    "http://localhost:5500",    # Live Server (VS Code)
-    "http://127.0.0.1:5500",
-    "null",                     # file:// origin
 ]
 extra = os.getenv("CORS_ORIGINS", "")
 if extra:

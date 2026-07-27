@@ -6,13 +6,8 @@ const nextConfig = {
     return [{ source: '/api/:path*', destination: 'http://localhost:8010/api/:path*' }];
   },
   productionBrowserSourceMaps: true,
-  distDir: process.env.DIST_DIR || '.next',
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Keep dev hot-reload artifacts separate from production builds.
+  distDir: process.env.DIST_DIR || (process.env.NODE_ENV === 'development' ? '.next-dev' : '.next'),
   images: {
     remotePatterns: imageHosts,
     minimumCacheTTL: 60,

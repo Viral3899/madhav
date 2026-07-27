@@ -25,6 +25,7 @@ const CurrencyContext = createContext<{
   setCurrency: (code: CurrencyCode) => void;
   setCountry: (country: Country) => void;
   formatCurrency: (amount: number) => string;
+  toBaseCurrency: (amount: number) => number;
 } | null>(null);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
@@ -53,6 +54,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       maximumFractionDigits: currency === 'INR' ? 0 : 2,
     }).format(amount * item.rate);
   }
+  function toBaseCurrency(amount: number) {
+    return amount / currencies[currency].rate;
+  }
   return (
     <CurrencyContext.Provider
       value={{
@@ -61,6 +65,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         setCurrency: changeCurrency,
         setCountry: changeCountry,
         formatCurrency,
+        toBaseCurrency,
       }}
     >
       {children}
